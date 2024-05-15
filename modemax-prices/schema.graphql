@@ -1,0 +1,34 @@
+type PriceCandle @entity {
+  id: ID!
+  token: String!
+  open: BigInt!
+  high: BigInt!
+  low: BigInt!
+  close: BigInt!
+  timestamp: Int! # start of period
+  period: String!
+}
+
+type TokenPrice24h @entity {
+  # tokenAddress
+  id: ID!
+
+  low: BigInt!
+  height: BigInt!
+  open: BigInt!
+  close: BigInt!
+  lowTimestamp: Int!
+  heightTimestamp: Int!
+
+  timestamp: Int!
+}
+
+type TokenPrice @entity {
+  # tokenAddress
+  id: ID!
+
+  minPrice: BigInt!
+  maxPrice: BigInt!
+
+  timestamp: Int!
+}

@@ -1,0 +1,10 @@
+{
+    "name": "moddemax-subgraph",
+    "license": "UNLICENSED",
+    "dependencies": {
+        "@graphprotocol/graph-cli": "^0.54.0",
+        "@graphprotocol/graph-ts": "0.20.0",
+        "ethers": "^5.4.6",
+        "moment": "^2.29.1"
+    }
+}

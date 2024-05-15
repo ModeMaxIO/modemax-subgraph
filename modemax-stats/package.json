@@ -1,0 +1,23 @@
+{
+  "name": "modemax-stats",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen-test": "graph codegen subgraph-testnet.yaml",
+    "build-test": "graph build subgraph-testnet.yaml",
+    "remove-modemax-test": "graph remove --node http://localhost:8020 modemax/stats",
+    "create-modemax-test": "graph create --node http://localhost:8020 modemax/stats",
+    "deploy-modemax-test": "graph deploy modemax/stats ./subgraph-testnet.yaml --version-label v0.0.1 --node http://localhost:8020 --ipfs http://127.0.0.1:5001",
+
+    "codegen-mainnet": "graph codegen subgraph-mainnet.yaml",
+    "build-mainnet": "graph build subgraph-mainnet.yaml",
+    "remove-modemax-mainnet": "graph remove --node https://graphdeploy.neonnexus.io modemax/stats",
+    "create-modemax-mainnet": "graph create --node https://graphdeploy.neonnexus.io modemax/stats",
+    "deploy-modemax-mainnet": "graph deploy modemax/stats ./subgraph-testnet.yaml --version-label v0.0.2 --node https://graphdeploy.neonnexus.io --ipfs http://ipfs.neonnexus.io"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.21.3",
+    "@graphprotocol/graph-ts": "0.20.0",
+    "ethers": "^5.4.6",
+    "moment": "^2.29.1"
+  }
+}

@@ -1,0 +1,82 @@
+enum LeaderBoardPeriod {
+  weekly
+  monthly
+  total
+}
+enum AirDropPeriod {
+  total
+  account
+}
+
+type Position @entity {
+  id: ID!
+  key: Bytes!
+  account: Bytes!
+  timestamp: Int!
+}
+
+type LeaderboardData @entity {
+  id: ID!
+
+  account: String!
+  margin: BigInt!
+  netProfit: BigInt!
+  tradingVolume: BigInt!
+  collateralAmount: BigInt!
+  liquidity: BigInt!
+  roi: BigDecimal!
+
+  period: LeaderBoardPeriod!
+  timestamp: Int!
+}
+
+type UserData @entity {
+  # startTime+":"+endTime+":"+ account or startTime+":"+endTime+":"+"total"
+  id: ID!
+
+  account: String!
+  traderProfit: BigInt!
+  tradingVolume: BigInt!
+  lp: BigInt!
+  period: AirDropPeriod!
+  timestamp:Int!
+  epoch: Int!
+}
+
+type UserLiquidityEntry @entity {
+  #startTime+":"+endTime+":"+ account
+  id: ID!
+  account: String!
+  epoch: Int!
+  userLiquidity:[UserLiquidity!] @derivedFrom(field: "userLiquidityEntry")
+}
+
+type UserLiquidity @entity {
+  #account+":"+timestamp
+  id: ID!
+  account: String!
+  balance:BigInt!
+  sizeDelta: BigInt!
+  lpPointsThis:BigInt!
+  lpPointsNext:BigInt!
+  timestamp: Int!
+  userLiquidityEntry:UserLiquidityEntry!
+}
+
+type UserLiquidityTotal @entity {
+  #account
+  id: ID!
+  account: String!
+  lp:BigInt!
+  lpPointsThis:BigInt!
+  timestamp: Int!
+}
+
+type ActivityInfo @entity {
+  # epoch+":"+startTime+":"+endTime
+  id: ID!
+
+  epoch: Int!
+  startTimestamp: Int!
+  endTimestamp: Int!
+}

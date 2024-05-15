@@ -1,0 +1,143 @@
+specVersion: 0.0.2
+description: MODE_MAX
+repository: https://github.com/gmx-io/gmx-subgraph
+schema:
+  file: ./schema.graphql
+
+dataSources:
+  - kind: ethereum/contract
+    name: EventEmitter
+    network: mainnet
+    source:
+      address: "0x9cF87fA6835d7413aB67f08bCE95fe444EdECf6D"
+      abi: EventEmitter
+      startBlock: 14217525
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Order
+        - PositionIncrease
+        - PositionDecrease
+        - PositionFeesInfo
+        - SwapInfo
+        - TradeAction
+        - Transaction
+        - UserGlpGmMigrationStat
+      abis:
+        - name: EventEmitter
+          file: ./abis/EventEmitter.json
+        - name: Reader
+          file: ./abis/Reader.json
+        - name: MarketToken
+          file: ./abis/MarketToken.json
+      eventHandlers:
+        - event: EventLog(address,string,indexed string,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
+          handler: handleEventLog
+        - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
+          handler: handleEventLog1Rollux
+#          handler: handleEventLog1Arbitrum
+        - event: EventLog2(address,string,indexed string,indexed bytes32,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
+          handler: handleEventLog2Arbitrum
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: Vault
+    network: mainnet
+    source:
+      address: "0x53B1a1557264dD51cfA8c35c05BB6aaE5b45FD17"
+      abi: Vault
+      startBlock: 16462415
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - UserGlpGmMigrationStat
+      abis:
+        - name: Vault
+          file: ./abis/Vault.json
+      eventHandlers:
+        - event: SellUSDG(address,address,uint256,uint256,uint256)
+          handler: handleSellUSDG
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: GlpManager
+    network: mainnet
+    source:
+      address: "0x3993193bc1226e38d215d5572032fa5D626C01Cf"
+      abi: GlpManager
+      startBlock: 16462458
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - UserGlpGmMigrationStat
+      abis:
+        - name: GlpManager
+          file: ./abis/GlpManager.json
+      eventHandlers:
+        - event: RemoveLiquidity(address,address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleRemoveLiquidity
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: BatchSender
+    network: mainnet
+    source:
+      address: "0x44f3c064426cfb225720E9BB21F4301222126f3a"
+      abi: BatchSender
+      startBlock: 16478316
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - BatchSend
+      abis:
+        - name: BatchSender
+          file: ./abis/BatchSender.json
+      eventHandlers:
+        - event: BatchSend(indexed uint256,indexed address,address[],uint256[])
+          handler: handleBatchSend
+      file: ./src/mapping.ts
+#  - kind: ethereum/contract
+#    name: BatchSenderNew
+#    network: mainnet
+#    source:
+#      address: "0x5384E6cAd96B2877B5B3337A277577053BD1941D"
+#      abi: BatchSender
+#      startBlock: 150447937
+#    mapping:
+#      kind: ethereum/events
+#      apiVersion: 0.0.4
+#      language: wasm/assemblyscript
+#      entities:
+#        - BatchSend
+#      abis:
+#        - name: BatchSender
+#          file: ./abis/BatchSender.json
+#      eventHandlers:
+#        - event: BatchSend(indexed uint256,indexed address,address[],uint256[])
+#          handler: handleBatchSend
+#      file: ./src/mapping.ts
+
+templates:
+  - kind: ethereum/contract
+    name: MarketTokenTemplate
+    network: mainnet
+    source:
+      abi: MarketToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Transaction
+      abis:
+        - name: MarketToken
+          file: ./abis/MarketToken.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleMarketTokenTransfer
+      file: ./src/mapping.ts

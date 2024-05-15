@@ -1,0 +1,26 @@
+specVersion: 0.0.4
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: FastPriceEvents
+    network: mainnet
+    source:
+      address: '0x89A8965D02c5021AbEE43C46b19Fc1Bb8beB9A86'
+      abi: FastPriceEvents
+      startBlock: 16477688
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.6
+      language: wasm/assemblyscript
+      entities:
+        - PriceCandle
+        - TokenPrice24h
+        - TokenPrice
+      abis:
+        - name: FastPriceEvents
+          file: ./abis/FastPriceEvents.json
+      eventHandlers:
+        - event: PriceUpdate(address,uint256,address)
+          handler: handlePriceUpdate
+      file: ./src/mapping.ts
