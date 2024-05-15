@@ -11,7 +11,7 @@ dataSources:
     source:
       address: "0x9cF87fA6835d7413aB67f08bCE95fe444EdECf6D"
       abi: EventEmitter
-      startBlock: 14217525
+      startBlock: 217525
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -47,7 +47,7 @@ dataSources:
     source:
       address: "0x53B1a1557264dD51cfA8c35c05BB6aaE5b45FD17"
       abi: Vault
-      startBlock: 16462415
+      startBlock: 462415
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -67,7 +67,7 @@ dataSources:
     source:
       address: "0x3993193bc1226e38d215d5572032fa5D626C01Cf"
       abi: GlpManager
-      startBlock: 16462458
+      startBlock: 462458
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -87,7 +87,7 @@ dataSources:
     source:
       address: "0x44f3c064426cfb225720E9BB21F4301222126f3a"
       abi: BatchSender
-      startBlock: 16478316
+      startBlock: 478316
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

@@ -8,7 +8,7 @@ dataSources:
     source:
       address: '0x1118Fa15aF11Eea68B500dD53dEf178e77f7fFa9'
       abi: PositionRouter
-      startBlock: 16464107
+      startBlock: 464107
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -31,7 +31,7 @@ dataSources:
     source:
       address: '0x612678Dd883Ce823C9910153A88793240Fa7a62F'
       abi: RewardRouterV2
-      startBlock: 16474636
+      startBlock: 474636
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -58,7 +58,7 @@ dataSources:
     name: Vault
     network: mainnet
     source:
-      startBlock: 16462415
+      startBlock: 462415
       address: '0x53B1a1557264dD51cfA8c35c05BB6aaE5b45FD17'
       abi: Vault
     mapping:
@@ -140,7 +140,7 @@ dataSources:
     source:
       address: '0x3993193bc1226e38d215d5572032fa5D626C01Cf'
       abi: GlpManager
-      startBlock: 16462458
+      startBlock: 462458
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

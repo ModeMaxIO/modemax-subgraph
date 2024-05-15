@@ -4,9 +4,9 @@
   "scripts": {
     "codegen-test": "graph codegen subgraph-testnet.yaml",
     "build-test": "graph build subgraph-testnet.yaml",
-    "remove-modemax-test": "graph remove --node http://localhost:8020 modemax/prices",
-    "create-modemax-test": "graph create --node http://localhost:8020 modemax/prices",
-    "deploy-modemax-test": "graph deploy modemax/prices ./subgraph-testnet.yaml --version-label v0.0.1 --node http://localhost:8020 --ipfs http://127.0.0.1:5001",
+    "remove-modemax-test": "graph remove --node https://graphdeploy.modemax.io modemax/prices",
+    "create-modemax-test": "graph create --node https://graphdeploy.modemax.io modemax/prices",
+    "deploy-modemax-test": "graph deploy modemax/prices ./subgraph-testnet.yaml --version-label v0.0.1 --node https://graphdeploy.modemax.io --ipfs http://ipfs.modemax.io",
 
     "codegen-mainnet": "graph codegen subgraph-mainnet.yaml",
     "build-mainnet": "graph build subgraph-mainnet.yaml",
