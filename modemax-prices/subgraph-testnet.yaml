@@ -6,9 +6,9 @@ dataSources:
     name: FastPriceEvents
     network: mainnet
     source:
-      address: '0xAF04dB7e4749CAed57997C6daB86F602de0D44E2'
+      address: '0x434c715Efa7b80f5d47c2677ad30DE148c1f71A9'
       abi: FastPriceEvents
-      startBlock: 14108103
+      startBlock: 14167882
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

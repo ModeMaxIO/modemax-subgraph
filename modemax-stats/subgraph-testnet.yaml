@@ -137,9 +137,9 @@ dataSources:
     name: FastPriceFeed
     network: mainnet
     source:
-      address: '0x40Aef43d5416c66356a080eC01716a42400B7CF7'
+      address: '0x1Bf7E15566786aeE2854be5A81fABb245047957C'
       abi: FastPriceFeed
-      startBlock: 14108107
+      startBlock: 14167885
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
