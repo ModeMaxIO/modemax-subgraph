@@ -9,9 +9,9 @@ dataSources:
     name: EventEmitter
     network: mainnet
     source:
-      address: "0x9cF87fA6835d7413aB67f08bCE95fe444EdECf6D"
+      address: "0x33C11F7Fb85EB746BF99FCeF3fc0e4bC56d7e76c"
       abi: EventEmitter
-      startBlock: 217525
+      startBlock: 14132647
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -45,9 +45,9 @@ dataSources:
     name: Vault
     network: mainnet
     source:
-      address: "0x53B1a1557264dD51cfA8c35c05BB6aaE5b45FD17"
+      address: "0x03f15224338bDE82C88143E7b4251fFB40eFE575"
       abi: Vault
-      startBlock: 462415
+      startBlock: 14078127
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -65,9 +65,9 @@ dataSources:
     name: GlpManager
     network: mainnet
     source:
-      address: "0x3993193bc1226e38d215d5572032fa5D626C01Cf"
+      address: "0x3E0dd58c412982dE0B4e55A569f8Eb298147d3Cc"
       abi: GlpManager
-      startBlock: 462458
+      startBlock: 14078169
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -85,9 +85,9 @@ dataSources:
     name: BatchSender
     network: mainnet
     source:
-      address: "0x44f3c064426cfb225720E9BB21F4301222126f3a"
+      address: "0x3C1AbC80cc4dCA0021431956b4d98c24a6783E36"
       abi: BatchSender
-      startBlock: 478316
+      startBlock: 14108460
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -101,26 +101,6 @@ dataSources:
         - event: BatchSend(indexed uint256,indexed address,address[],uint256[])
           handler: handleBatchSend
       file: ./src/mapping.ts
-#  - kind: ethereum/contract
-#    name: BatchSenderNew
-#    network: mainnet
-#    source:
-#      address: "0x5384E6cAd96B2877B5B3337A277577053BD1941D"
-#      abi: BatchSender
-#      startBlock: 150447937
-#    mapping:
-#      kind: ethereum/events
-#      apiVersion: 0.0.4
-#      language: wasm/assemblyscript
-#      entities:
-#        - BatchSend
-#      abis:
-#        - name: BatchSender
-#          file: ./abis/BatchSender.json
-#      eventHandlers:
-#        - event: BatchSend(indexed uint256,indexed address,address[],uint256[])
-#          handler: handleBatchSend
-#      file: ./src/mapping.ts
 
 templates:
   - kind: ethereum/contract

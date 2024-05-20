@@ -11,13 +11,13 @@ class ReaderContractConfig {
 
 let readerContractByNetwork = new Map<string, ReaderContractConfig>();
 
-//rollux-testnet
+//mode-testnet
 readerContractByNetwork.set(
     "rollux",
     new ReaderContractConfig(
-        "0x0b1619AfAB07e9B963f89ac3d171eEBCeE120717",//SyntheticsReader
-        "0x66B39B1A5D33BCAE662796a0fB9c2246803c4f96", //DataStore
-        16536546 + 1 //readerContractAddress blockNumber
+        "0x7b5CC8d0F076BB6D4F4338Cf33832D632DcD0021",//SyntheticsReader
+        "0xdC09Bea635Fb0C63a38d6B7f3edfCb7DfB59326E", //DataStore
+        14086821 + 1 //readerContractAddress blockNumber
     )
 );
 

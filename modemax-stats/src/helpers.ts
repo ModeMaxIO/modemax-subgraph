@@ -4,15 +4,17 @@ import { ChainlinkPrice, UniswapPrice } from '../generated/schema'
 export let BASIS_POINTS_DIVISOR = BigInt.fromI32(10000)
 export let PRECISION = BigInt.fromI32(10).pow(30)
 
-export let WETH = '0x5ed4813824e5e2baf9bbc211121b21ab38e02522'
-export let BTC = '0xfa600253bb6fe44ceab0538000a8448807e50c85'
-export let USDT = '0x9d973bac12bb62a55be0f9f7ad201eea4f9b8428'
-export let SYS = '0xcac0759160d57a33d332ed36a555c10957694407'
-export let USDC = '0xf111aa386823c4cf33f349597f1e772973ac0913'
+export let WETH = '0x5ce359ff65f8bc3c874c16fa24a2c1fd26bb57cd'
+export let BTC = '0x00d84e62a854e54ba7289ab6506f95000bb4b008'
+export let USDT = '0x4557d5f50828302db39d9530f6d3648d48bec04a'
+// MODE
+export let SYS = '0x4ffa6cdeb4def980b75e3f4764797a2cad1faef3'
+export let USDC = '0x22198b46c84cf43831e65d32a9403a194d617a61'
 
+// Deprecated
 export let DAI = '0x66a1b915b55bde2fa3402ed59bb5af19879c1178'
-//REX
-export let GMX = '0xe32abbc6b2393af05d944118cc95787bf5777897'
+//MOX
+export let GMX = '0xadb02879f2b446e26da80139a91c93af1fec017b'
 
 export function timestampToDay(timestamp: BigInt): BigInt {
   return (timestamp / BigInt.fromI32(86400)) * BigInt.fromI32(86400)
