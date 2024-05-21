@@ -154,9 +154,8 @@ dataSources:
         - event: EventLog2(address,string,indexed string,indexed bytes32,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
           handler: handleEventLog2
       file: ./src/mapping.ts
-
   - kind: ethereum/contract
-    name: ChainlinkAggregatorETH
+    name: ChainlinkAggregatorWETH
     network: mainnet
     source:
       address: '0x2A8D0136347b3667ba600e6F985aEC971A97A9E0'
@@ -175,7 +174,26 @@ dataSources:
         - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
           handler: handleAnswerUpdated
       file: ./src/mapping.ts
-
+  - kind: ethereum/contract
+    name: ChainlinkAggregatorETH
+    network: mainnet
+    source:
+      address: '0xFbd9Ed03Dc4a35F896CBb2939E6495a297777DB9'
+      abi: ChainlinkAggregator4Supra
+      startBlock: 14214491
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - ChainlinkPrice
+      abis:
+        - name: ChainlinkAggregator4Supra
+          file: ./abis/ChainlinkAggregator4Supra.json
+      eventHandlers:
+        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+          handler: handleAnswerUpdated
+      file: ./src/mapping.ts
   - kind: ethereum/contract
     name: ChainlinkAggregatorMODE
     network: mainnet

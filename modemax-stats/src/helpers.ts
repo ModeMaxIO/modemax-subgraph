@@ -7,14 +7,17 @@ export let PRECISION = BigInt.fromI32(10).pow(30)
 export let WETH = '0x5ce359ff65f8bc3c874c16fa24a2c1fd26bb57cd'
 export let BTC = '0x00d84e62a854e54ba7289ab6506f95000bb4b008'
 export let USDT = '0x4557d5f50828302db39d9530f6d3648d48bec04a'
-// MODE
+export let USDT_M = '0x1bfa66cb34851b98b5d23cadc554bbb4cba881f6'
+// SYS = MODE
 export let SYS = '0x4ffa6cdeb4def980b75e3f4764797a2cad1faef3'
+export let SYS_M = '0xc14092d39d4b9034b41b2d00581e8b4cb282611f'
 export let USDC = '0x22198b46c84cf43831e65d32a9403a194d617a61'
-
+export let ETH = '0xc7b06f55fbcd31cd691504f3dfc4efa9082616b7'
 // Deprecated
 export let DAI = '0x66a1b915b55bde2fa3402ed59bb5af19879c1178'
-//MOX
+// GMX = MOX
 export let GMX = '0xadb02879f2b446e26da80139a91c93af1fec017b'
+
 
 export function timestampToDay(timestamp: BigInt): BigInt {
   return (timestamp / BigInt.fromI32(86400)) * BigInt.fromI32(86400)
@@ -56,15 +59,21 @@ export function getTokenDecimals(token: String): u8 {
   let decimals = 0
   if (token == WETH) {
     decimals = 18
-  } else if (token == BTC) {
+  } else if (token == ETH) {
+    decimals = 18
+  }  else if (token == BTC) {
     decimals = 18
   } else if (token == DAI) {
     decimals = 18
   } else if (token == SYS) {
     decimals = 18
+  } else if (token == SYS_M) {
+    decimals = 18
   } else if (token == USDT) {
     decimals = 6
-  }else if (token == USDC) {
+  } else if (token == USDT_M) {
+    decimals = 6
+  }  else if (token == USDC) {
     decimals = 6
   } else if (token == GMX) {
     decimals = 18
@@ -103,10 +112,13 @@ export function getTokenPrice(token: String): BigInt {
 
   let prices = new TypedMap<String, BigInt>()
   prices.set(WETH, BigInt.fromI32(1580) * PRECISION)
+  prices.set(ETH, BigInt.fromI32(1580) * PRECISION)
   prices.set(BTC, BigInt.fromI32(25920) * PRECISION)
   prices.set(SYS, (BigInt.fromI32(832) * PRECISION) / BigInt.fromI32(10000))
+  prices.set(SYS_M, (BigInt.fromI32(832) * PRECISION) / BigInt.fromI32(10000))
   prices.set(DAI, PRECISION)
   prices.set(USDT, PRECISION)
+  prices.set(USDT_M, PRECISION)
   prices.set(USDC, PRECISION)
   prices.set(GMX, BigInt.fromI32(30) * PRECISION)
 

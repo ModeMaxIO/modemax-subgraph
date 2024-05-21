@@ -26,12 +26,32 @@ dataSources:
           handler: handleAnswerUpdatedBTC
       file: ./src/pricesMapping.ts
   - kind: ethereum/contract
-    name: ChainlinkAggregatorETH
+    name: ChainlinkAggregatorWETH
     network: mainnet
     source:
       address: '0x2A8D0136347b3667ba600e6F985aEC971A97A9E0'
       abi: ChainlinkAggregator
       startBlock: 14166301
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - ChainlinkPrice
+      abis:
+        - name: ChainlinkAggregator
+          file: ./abis/ChainlinkAggregator.json
+      eventHandlers:
+        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+          handler: handleAnswerUpdatedWETH
+      file: ./src/pricesMapping.ts
+  - kind: ethereum/contract
+    name: ChainlinkAggregatorETH
+    network: mainnet
+    source:
+      address: '0xFbd9Ed03Dc4a35F896CBb2939E6495a297777DB9'
+      abi: ChainlinkAggregator
+      startBlock: 14214491
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -63,7 +83,7 @@ dataSources:
           file: ./abis/ChainlinkAggregator.json
       eventHandlers:
         - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
-          handler: handleAnswerUpdatedSYS
+          handler: handleAnswerUpdatedMODE
       file: ./src/pricesMapping.ts
   - kind: ethereum/contract
     name: GlpManager
@@ -137,9 +157,9 @@ dataSources:
     name: FastPriceFeed
     network: mainnet
     source:
-      address: '0x1Bf7E15566786aeE2854be5A81fABb245047957C'
+      address: '0xDADD2Ec9B01a174Ec2120065314631bE3560136C'
       abi: FastPriceFeed
-      startBlock: 14167885
+      startBlock: 14217254
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -158,9 +178,9 @@ dataSources:
     name: FastPriceEvents
     network: mainnet
     source:
-      address: '0xAF04dB7e4749CAed57997C6daB86F602de0D44E2'
+      address: '0x5ACC4e84430B21794b5863442095c72d58eC1Af0'
       abi: FastPriceEvents
-      startBlock: 14108103
+      startBlock: 14217250
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4

@@ -10,7 +10,7 @@ import {
   USDT,
   GMX,
   getTokenAmountUsd,
-  timestampToPeriod,
+  timestampToPeriod, ETH,
 } from './helpers'
 
 import { AnswerUpdated as AnswerUpdatedEvent } from '../generated/ChainlinkAggregatorBTC/ChainlinkAggregator'
@@ -55,12 +55,21 @@ export function handleAnswerUpdatedBTC(event: AnswerUpdatedEvent): void {
   )
 }
 
-export function handleAnswerUpdatedETH(event: AnswerUpdatedEvent): void {
+export function handleAnswerUpdatedWETH(event: AnswerUpdatedEvent): void {
   _storeChainlinkPrice(
     WETH,
     event.params.current,
     event.block.timestamp,
     event.block.number
+  )
+}
+
+export function handleAnswerUpdatedETH(event: AnswerUpdatedEvent): void {
+  _storeChainlinkPrice(
+      ETH,
+      event.params.current,
+      event.block.timestamp,
+      event.block.number
   )
 }
 
@@ -73,7 +82,7 @@ export function handleAnswerUpdatedUSDT(event: AnswerUpdatedEvent): void {
   )
 }
 
-export function handleAnswerUpdatedSYS(event: AnswerUpdatedEvent): void {
+export function handleAnswerUpdatedMODE(event: AnswerUpdatedEvent): void {
   _storeChainlinkPrice(
     SYS,
     event.params.current,
