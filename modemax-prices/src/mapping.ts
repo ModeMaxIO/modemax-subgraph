@@ -1,4 +1,4 @@
-import {Address, BigInt, Bytes, ethereum} from "@graphprotocol/graph-ts";
+import {Address, BigInt, Bytes, ethereum,log} from "@graphprotocol/graph-ts";
 import { PriceUpdate } from '../generated/FastPriceEvents/FastPriceEvents'
 import {PriceCandle, TokenPrice, TokenPrice24h,} from '../generated/schema'
 
