@@ -133,7 +133,6 @@ export function handleMarketTokenTransfer(event: Transfer): void {
   let from = event.params.from.toHexString();
   let to = event.params.to.toHexString();
   let value = event.params.value;
-
   // `from` user redeems or transfers out GM tokens
   if (from != ADDRESS_ZERO) {
     // LiquidityProviderIncentivesStat *should* be updated before UserMarketInfo

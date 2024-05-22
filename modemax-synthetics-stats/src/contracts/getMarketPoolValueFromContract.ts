@@ -46,10 +46,9 @@ export function getMarketPoolValueFromContract(
   let shortTokenPriceArg = createPriceForContractCall<Reader__getMarketTokenPriceInputShortTokenPriceStruct>(
     marketInfo.shortToken
   );
-
   /*
   log.warning(
-    "args dataStoreAddress={}, marketArg.marketToken={}, marketArg.indexToken={},  marketArg.longToken={}, marketArg.shortToken={}, indexTokenPriceArg.min={}, indexTokenPriceArg.max={}, longTokenPriceArg.min={}, longTokenPriceArg.max={}, shortTokenPriceArg.min={}, shortTokenPriceArg.max={}, bytes={}",
+    "###args dataStoreAddress={}, marketArg.marketToken={}, marketArg.indexToken={},  marketArg.longToken={}, marketArg.shortToken={}, indexTokenPriceArg.min={}, indexTokenPriceArg.max={}, longTokenPriceArg.min={}, longTokenPriceArg.max={}, shortTokenPriceArg.min={}, shortTokenPriceArg.max={}, bytes={}",
     [
       contractConfig.dataStoreAddress.toHexString(),
       marketArg.marketToken.toHexString(),
@@ -64,8 +63,7 @@ export function getMarketPoolValueFromContract(
       shortTokenPriceArg.max.toString(),
       MAX_PNL_FACTOR_FOR_TRADERS.toHexString()
     ]
-  );
-  */
+  );*/
 
   let res = contract.getMarketTokenPrice(
     contractConfig.dataStoreAddress,

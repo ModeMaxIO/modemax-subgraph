@@ -37,12 +37,12 @@ marketConfigs.set(
         "0x4557d5f50828302db39d9530f6d3648d48bec04a"
     )
 );
-// CP marketConfigs  index: MODE  long: MODE.m short: USDT.m
+// CP marketConfigs  index: MODE.m  long: MODE.m short: USDT.m
 marketConfigs.set(
-    "0xa0dce6125a42e68849d646da8b3deab8dfd01918",
+    "0x080145abe3613f96a3563ee4a7d9515de5cf56ab",
     createMarketConfig(
-        "0xa0dce6125a42e68849d646da8b3deab8dfd01918",
-        "0x4ffa6cdeb4def980b75e3f4764797a2cad1faef3",
+        "0x080145abe3613f96a3563ee4a7d9515de5cf56ab",
+        "0xc14092d39d4b9034b41b2d00581e8b4cb282611f",
         "0xc14092d39d4b9034b41b2d00581e8b4cb282611f",
         "0x1bfa66cb34851b98b5d23cadc554bbb4cba881f6"
     )

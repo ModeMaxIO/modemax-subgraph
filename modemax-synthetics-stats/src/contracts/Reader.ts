@@ -7,7 +7,8 @@ import {
   Entity,
   Bytes,
   Address,
-  BigInt
+  BigInt,
+  log
 } from "@graphprotocol/graph-ts";
 
 export class Reader__getAccountOrdersResultValue0Struct extends ethereum.Tuple {
