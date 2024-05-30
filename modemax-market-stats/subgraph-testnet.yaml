@@ -85,25 +85,34 @@ dataSources:
         - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
           handler: handleEventLog1
       file: ./src/mapping.ts
+
+
   - kind: ethereum/contract
-    name: FastPriceEvents
+    name: ReferralStorage
     network: mainnet
     source:
-      address: '0x5ACC4e84430B21794b5863442095c72d58eC1Af0'
-      abi: FastPriceEvents
-      startBlock: 14217250
+      address: '0x06d3584F4c5E1F631f9aa3c8f6aF7C82a9dC153C'
+      abi: ReferralStorage
+      startBlock: 14080250
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - ActivityInfo
+        - ReferralCode
+        - TraderToReferralCode
       abis:
-        - name: FastPriceEvents
-          file: ./abis/FastPriceEvents.json
+        - name: ReferralStorage
+          file: ./abis/ReferralStorage.json
       eventHandlers:
-        - event: PriceUpdate(address,uint256,address)
-          handler: handlePriceUpdate
+        - event: GovSetCodeOwner(bytes32,address)
+          handler: handleGovSetCodeOwner
+        - event: RegisterCode(address,bytes32)
+          handler: handleRegisterCode
+        - event: SetCodeOwner(address,address,bytes32)
+          handler: handleSetCodeOwner
+        - event: SetTraderReferralCode(address,bytes32)
+          handler: handleSetTraderReferralCode
       file: ./src/mapping.ts
 
 templates:

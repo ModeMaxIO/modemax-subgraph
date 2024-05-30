@@ -6,6 +6,7 @@ enum LeaderBoardPeriod {
 enum AirDropPeriod {
   total
   account
+  day
 }
 
 type Position @entity {
@@ -31,28 +32,28 @@ type LeaderboardData @entity {
 }
 
 type UserData @entity {
-  # startTime+":"+endTime+":"+ account or startTime+":"+endTime+":"+"total"
+  # "account:"+ timestamp + account or "total:" + timestamp or "day:"+ timestamp + account
   id: ID!
 
   account: String!
   traderProfit: BigInt!
   tradingVolume: BigInt!
   lp: BigInt!
+  referral:BigInt!
   period: AirDropPeriod!
   timestamp:Int!
-  epoch: Int!
 }
 
 type UserLiquidityEntry @entity {
-  #startTime+":"+endTime+":"+ account
+  #timestamp+":"+ account
   id: ID!
   account: String!
-  epoch: Int!
+  timestamp: Int!
   userLiquidity:[UserLiquidity!] @derivedFrom(field: "userLiquidityEntry")
 }
 
 type UserLiquidity @entity {
-  #account+":"+timestamp
+  #timestamp+":"+account
   id: ID!
   account: String!
   balance:BigInt!
@@ -72,11 +73,34 @@ type UserLiquidityTotal @entity {
   timestamp: Int!
 }
 
-type ActivityInfo @entity {
+# Referral start
+type ReferralCode @entity {
+  id: ID!
+  code: String!
+  owner: String!
+}
+type TraderToReferralCode @entity {
+  id: ID!
+  referralCode: ReferralCode!
+}
+#Referral end
+
+type AirdropConfig @entity {
   # epoch+":"+startTime+":"+endTime
   id: ID!
 
   epoch: Int!
   startTimestamp: Int!
   endTimestamp: Int!
+}
+
+type ReferalPositionRaw @entity {
+  id: ID!
+  account: String!
+  affiliate:String!
+  referralCode:String!
+  isIncrease:Boolean!
+  volume:BigInt!
+  version:String!
+  timestamp: BigInt!
 }

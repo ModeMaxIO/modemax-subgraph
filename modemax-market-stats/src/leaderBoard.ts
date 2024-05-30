@@ -74,7 +74,6 @@ function _storeLeaderboardByTypeV2(
         let avgPrice = collateralTokenPriceMin.plus(collateralTokenPriceMax).div(BigInt.fromI32(2))
         collateralAmountDelta = getIntItem("collateralDeltaAmount",eventData).times(avgPrice);
     }
-    // log.error("-----_storeLeaderboardByTypeV2------{} {} {} {} {} {} {}", [actionType,account,period, lp.toString(), sizeDeltaUsd.toString(), netProfit.toString(), collateralAmountDelta.toString()])
 
     if(actionType == "increasePosition"){
         if(period == "total"){
@@ -117,7 +116,6 @@ function _storeLeaderboardByType(
     collateralDelta: BigInt,
     timestamp: BigInt,
 ): void {
-    // log.error("----_storeLeaderboardByTypeV1-----{} {} {} {} {}", [actionType,account,period, delta.toString(),collateralDelta.toString()]);
 
     if(period == "daily"){
         timestamp = BigInt.fromString(_getDayId(timestamp));

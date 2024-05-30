@@ -1,15 +1,15 @@
 import {
-  BigInt,
+  Address,
+  BigInt, Bytes,
   log
 } from '@graphprotocol/graph-ts'
-
 import {
   IncreasePosition as IncreasePositionEvent,
   DecreasePosition as DecreasePositionEvent,
   LiquidatePosition as LiquidatePositionEvent,
   UpdatePosition as UpdatePositionEvent,
 } from '../generated/Vault2/Vault'
-import {Position} from '../generated/schema'
+import {Position, ReferralCode, TraderToReferralCode} from '../generated/schema'
 import {AddLiquidity, RemoveLiquidity} from "../generated/GlpManager/GlpManager";
 import {
   EventLog1,
@@ -17,10 +17,15 @@ import {
 } from "../generated/EventEmitter/EventEmitter";
 import {getAddressItem, getAddressString, getIntItem, getUintItem} from "./eventLog1Data";
 import {Transfer} from "../generated/templates/MarketTokenTemplate/MarketToken";
-import {storeLeaderboard, storeLeaderboardV2} from "./leaderBoardMapping";
-import {storeActivityInfo, storeUserData} from "./airdropMapping";
-import {PriceUpdate} from "../generated/FastPriceEvents/FastPriceEvents";
+import {storeLeaderboard, storeLeaderboardV2} from "./leaderBoard";
+import {saveReferalPositionRaw, storeUserData} from "./airdrop";
 import {MarketTokenTemplate} from "../generated/templates";
+import {
+  GovSetCodeOwner,
+  RegisterCode,
+  SetCodeOwner,
+  SetTraderReferralCode
+} from "../generated/ReferralStorage/ReferralStorage";
 
 let ZERO = BigInt.zero();
 let ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
@@ -28,16 +33,17 @@ let ADDRESS_ZERO = "0x0000000000000000000000000000000000000000";
 export function handleIncreasePosition(event: IncreasePositionEvent): void {
   let positionId = event.params.key.toHexString()
   let position = Position.load(positionId)
+  let account = event.params.account
   if (position == null) {
     position = new Position(positionId)
     position.key = event.params.key
-    position.account = event.params.account
+    position.account = account
     position.timestamp = event.block.timestamp.toI32()
   }
   position.save()
 
   storeLeaderboard(
-      event.params.account.toHexString(),
+      account.toHexString(),
       "increasePosition",
       event.params.sizeDelta,
       event.params.collateralDelta,
@@ -45,27 +51,46 @@ export function handleIncreasePosition(event: IncreasePositionEvent): void {
   )
   storeUserData(
       "increasePosition",
-      position.account.toHexString(),
+      account.toHexString(),
       ZERO,
       ZERO,
       event.params.sizeDelta,
       event.block.timestamp
   )
+
+  let referralCode = _getReferralCode(account.toHexString())
+  if(referralCode!=""){
+    let owner = _getOwner(account.toHexString(),referralCode)
+    if (owner!=""){
+      storeUserData("referralIncreasePosition",owner,ZERO,ZERO,event.params.sizeDelta,event.block.timestamp)
+      saveReferalPositionRaw(
+          event.transaction.hash.toHexString() + ":" + event.logIndex.toString(),
+          account.toHexString(),
+          owner,
+          referralCode.toString(),
+          true,
+          event.params.sizeDelta,
+          event.block.timestamp,
+          "V1"
+      )
+    }
+  }
 }
 
 export function handleDecreasePosition(event: DecreasePositionEvent): void {
   let positionId = event.params.key.toHexString()
   let position = Position.load(positionId)
+  let account = event.params.account
   if (position == null) {
     position = new Position(positionId)
     position.key = event.params.key
-    position.account = event.params.account
+    position.account = account
     position.timestamp = event.block.timestamp.toI32()
   }
   position.save()
 
   storeLeaderboard(
-      position.account.toHexString(),
+      account.toHexString(),
       "decreasePosition",
       event.params.sizeDelta,
       event.params.collateralDelta,
@@ -73,12 +98,30 @@ export function handleDecreasePosition(event: DecreasePositionEvent): void {
   )
   storeUserData(
       "decreasePosition",
-      event.params.account.toHexString(),
+      account.toHexString(),
       ZERO,
       ZERO,
       event.params.sizeDelta,
       event.block.timestamp
   )
+
+  let referralCode = _getReferralCode(account.toHexString());
+  if(referralCode!=""){
+    let owner = _getOwner(account.toHexString(),referralCode)
+    if (owner!=""){
+      storeUserData("referralDecreasePosition",owner,ZERO,ZERO,event.params.sizeDelta,event.block.timestamp)
+      saveReferalPositionRaw(
+          event.transaction.hash.toHexString() + ":" + event.logIndex.toString(),
+          account.toHexString(),
+          owner,
+          referralCode.toString(),
+          false,
+          event.params.sizeDelta,
+          event.block.timestamp,
+          "V1"
+      )
+    }
+  }
 }
 
 export function handleUpdatePosition(event: UpdatePositionEvent): void {
@@ -185,6 +228,7 @@ export function handleRemoveLiquidity(event: RemoveLiquidity): void {
   )
 }
 
+//V2
 export function handleEventLog1(event: EventLog1): void {
   let eventName = event.params.eventName;
   let eventData = event.params.eventData;
@@ -194,52 +238,49 @@ export function handleEventLog1(event: EventLog1): void {
     MarketTokenTemplate.create(marketToken);
     return;
   }
-
-  if (eventName == "PositionIncrease") {
+  if (eventName == "PositionIncrease" || eventName == "PositionDecrease") {
     let account = getAddressString("account",eventData)!;
     let sizeDeltaUsd = getUintItem("sizeDeltaUsd", eventData);
     let netProfit = getIntItem("basePnlUsd", eventData);
+    let actionType = eventName == "PositionIncrease"?"increasePosition":"decreasePosition"
+    let timestamp = event.block.timestamp;
+
     storeLeaderboardV2(
         account,
-        "increasePosition",
+        actionType,
         eventData,
         ZERO,
-        event.block.timestamp
+        timestamp
     )
     storeUserData(
-        "increasePosition",
+        actionType,
         account,
         ZERO,
         netProfit,
         sizeDeltaUsd,
-        event.block.timestamp
+        timestamp
     )
-    return;
-  }
 
-  if (eventName == "PositionDecrease") {
-    let account = getAddressString("account", eventData)!;
-    let sizeDeltaUsd = getUintItem("sizeDeltaUsd", eventData);
-    let netProfit = getIntItem("basePnlUsd", eventData);
-
-    // log.error("----handleEventLog1----decreasePosition----{} {}:", [sizeDeltaUsd.toString(), netProfit.toString()])
-    storeLeaderboardV2(
-        account,
-        "decreasePosition",
-        eventData,
-        ZERO,
-        event.block.timestamp
-    )
-    storeUserData(
-        "decreasePosition",
-        account,
-        ZERO,
-        netProfit,
-        sizeDeltaUsd,
-        event.block.timestamp
-    )
-    return;
+    let referralActionType = eventName == "PositionIncrease"?"referralIncreasePosition":"referralDecreasePosition"
+    let referralCode = _getReferralCode(account);
+    if (referralCode!=""){
+      let owner = _getOwner(account,referralCode)
+      if (owner!=""){
+        storeUserData(referralActionType,owner,ZERO,ZERO,sizeDeltaUsd,timestamp)
+        saveReferalPositionRaw(
+            event.transaction.hash.toHexString() + ":" + event.logIndex.toString(),
+            account,
+            owner,
+            referralCode.toString(),
+            eventName == "PositionIncrease",
+            sizeDeltaUsd,
+            event.block.timestamp,
+            "V2"
+        )
+      }
+    }
   }
+  return;
 }
 
 export function handleMarketTokenTransfer(event: Transfer): void {
@@ -249,30 +290,105 @@ export function handleMarketTokenTransfer(event: Transfer): void {
   let eventData = new EventLog1EventDataStruct();
   if (from != ADDRESS_ZERO) {
     storeLeaderboardV2(from,"liquidity",eventData,value.neg(),event.block.timestamp);
-    // airdrop does not require statistical CP data
-    // storeUserData(
-    //     "removeLiquidity",
-    //     from,
-    //     value.neg(),
-    //     ZERO,
-    //     ZERO,
-    //     event.block.timestamp
-    // )
+    storeUserData(
+        "removeLiquidity",
+        from,
+        value.neg(),
+        ZERO,
+        ZERO,
+        event.block.timestamp
+    )
   }
   if (to != ADDRESS_ZERO) {
     storeLeaderboardV2(to,"liquidity",eventData,value,event.block.timestamp);
-    // airdrop does not require statistical CP data
-    // storeUserData(
-    //     "addLiquidity",
-    //     to,
-    //     value,
-    //     ZERO,
-    //     ZERO,
-    //     event.block.timestamp
-    // )
+    storeUserData(
+        "addLiquidity",
+        to,
+        value,
+        ZERO,
+        ZERO,
+        event.block.timestamp
+    )
   }
 }
 
-export function handlePriceUpdate(event: PriceUpdate): void {
-  storeActivityInfo();
+export function handleRegisterCode(event: RegisterCode): void {
+  _saveReferralCode(event.block.timestamp,event.params.code, event.params.account)
+}
+
+export function handleGovSetCodeOwner(event: GovSetCodeOwner): void {
+  let referralCodeEntity = ReferralCode.load(event.params.code.toHexString());
+  if (referralCodeEntity == null) {
+    _saveReferralCode(
+        event.block.timestamp,
+        event.params.code,
+        event.params.newAccount
+    );
+  } else {
+    referralCodeEntity.owner = event.params.newAccount.toHexString();
+    referralCodeEntity.save();
+  }
+}
+
+export function handleSetCodeOwner(event: SetCodeOwner): void {
+  let referralCodeEntity = ReferralCode.load(event.params.code.toHexString());
+  if (referralCodeEntity == null) {
+    _saveReferralCode(
+        event.block.timestamp,
+        event.params.code,
+        event.params.newAccount
+    );
+  } else {
+    referralCodeEntity.owner = event.params.newAccount.toHexString();
+    referralCodeEntity.save();
+  }
+}
+
+export function handleSetTraderReferralCode(
+    event: SetTraderReferralCode
+): void {
+  let referralCodeEntity = ReferralCode.load(event.params.code.toHexString());
+  if (referralCodeEntity == null) {
+    return;
+  }
+  let traderToReferralCode = new TraderToReferralCode(
+      event.params.account.toHexString()
+  );
+  traderToReferralCode.referralCode = event.params.code.toHexString();
+  traderToReferralCode.save();
+}
+
+function _saveReferralCode(timestamp: BigInt, code: Bytes, owner: Address):void{
+  let referralCodeEntity = new ReferralCode(code.toHexString());
+  referralCodeEntity.owner = owner.toHexString();
+  referralCodeEntity.code = code.toHex();
+  referralCodeEntity.save();
+}
+
+function _getOwner(account: string,referralCode:string):string{
+  let owner = ""
+  if (referralCode == "") {
+    owner = "";
+  }else{
+    let referralCodeEntity = ReferralCode.load(referralCode);
+    if (referralCodeEntity!=null) {
+      let affiliate = referralCodeEntity.owner;
+      if (affiliate!=account){
+        owner = affiliate;
+      }
+    }
+  }
+  return owner;
+}
+
+function _getReferralCode(account:string) :string{
+  let traderToReferralCode = TraderToReferralCode.load(account);
+  if (traderToReferralCode == null) {
+    return "";
+  }
+  let referralCode = traderToReferralCode.referralCode
+  if(referralCode == null){
+    return "";
+  }
+  return referralCode.toString();
 }

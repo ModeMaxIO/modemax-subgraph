@@ -2,6 +2,7 @@ import {BigDecimal, BigInt, ethereum, json} from '@graphprotocol/graph-ts'
 import {LeaderboardData} from '../generated/schema'
 
 let ZERO = BigInt.fromI32(0)
+let WEEKLY_SECONDS = BigInt.fromI32(86400*7)
 
 export function _getWeekId(timestamp: BigInt): string{
     let MILLS = BigInt.fromI32(1000);
@@ -13,14 +14,13 @@ export function _getWeekId(timestamp: BigInt): string{
     return BigInt.fromI64(time).div(MILLS).toI32().toString();
 }
 
+export function _getEpochTimestampId(timestamp: BigInt,epochSeconds:BigInt): BigInt{
+    return timestamp.div(epochSeconds).times(epochSeconds)
+}
+
 export function _getDayId(timestamp: BigInt): string {
     let dayTimestamp = (timestamp.toI32() / 86400) * 86400
     return dayTimestamp.toString()
-}
-
-export function _getHourId(timestamp: BigInt): string {
-    let hour = BigInt.fromI32(3600)
-    return timestamp.div(hour).times(hour).toString()
 }
 
 export function _getMonthId(timestamp: BigInt): string {
