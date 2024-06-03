@@ -4,7 +4,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: FastPriceEvents
-    network: mainnet
+    network: mode-testnet
     source:
       address: '0x5ACC4e84430B21794b5863442095c72d58eC1Af0'
       abi: FastPriceEvents

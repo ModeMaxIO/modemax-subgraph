@@ -567,38 +567,11 @@ function handleDepositExecuted(event: EventLog2, eventData: EventData): void {
   saveUserGlpGmMigrationStatGmData(depositRef.account, event.block.timestamp.toI32(), depositUsd);
 }
 
-export function handleEventLog1Rollux(event: EventLog1): void {
-  handleEventLog1(event, "rollux");
+export function handleEventLog1Mode(event: EventLog1): void {
+  handleEventLog1(event, "mode");
 }
 
-export function handleEventLog1Arbitrum(event: EventLog1): void {
-  handleEventLog1(event, "arbitrum");
+export function handleEventLog2Mode(event: EventLog2): void {
+  handleEventLog2(event, "mode");
 }
 
-export function handleEventLog1Goerli(event: EventLog1): void {
-  handleEventLog1(event, "goerli");
-}
-
-export function handleEventLog1Avalanche(event: EventLog1): void {
-  handleEventLog1(event, "avalanche");
-}
-
-export function handleEventLog1Fuji(event: EventLog1): void {
-  handleEventLog1(event, "fuji");
-}
-
-export function handleEventLog2Arbitrum(event: EventLog2): void {
-  handleEventLog2(event, "arbitrum");
-}
-
-export function handleEventLog2Goerli(event: EventLog2): void {
-  handleEventLog2(event, "goerli");
-}
-
-export function handleEventLog2Avalanche(event: EventLog2): void {
-  handleEventLog2(event, "avalanche");
-}
-
-export function handleEventLog2Fuji(event: EventLog2): void {
-  handleEventLog2(event, "fuji");
-}
