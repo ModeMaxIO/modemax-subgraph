@@ -4,7 +4,7 @@ import { ChainlinkPrice, UniswapPrice } from '../generated/schema'
 export let BASIS_POINTS_DIVISOR = BigInt.fromI32(10000)
 export let PRECISION = BigInt.fromI32(10).pow(30)
 
-export let WETH = '0x5ce359ff65f8bc3c874c16fa24a2c1fd26bb57cd'
+export let WETH = '0xc7b06f55fbcd31cd691504f3dfc4efa9082616b7'
 export let BTC = '0x00d84e62a854e54ba7289ab6506f95000bb4b008'
 export let USDT = '0x4557d5f50828302db39d9530f6d3648d48bec04a'
 export let USDT_M = '0x1bfa66cb34851b98b5d23cadc554bbb4cba881f6'

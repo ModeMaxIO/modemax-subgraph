@@ -11,8 +11,8 @@ import {_getDayId, _getEpochTimestampId} from "./helpers";
 
 let ZERO = BigInt.zero();
 let EPOCH = BigInt.fromI32(1)
-let EPOCH_START_TIME = BigInt.fromI32(1713571200) // UTC 2024-04-20 00:00:00
-let EPOCH_END_TIME = BigInt.fromI32(1718063999) // UTC 2024-06-10 23:59:59
+let EPOCH_START_TIME = BigInt.fromI32(1714492800) // UTC 2024-05-01 00:00:00
+let EPOCH_END_TIME = BigInt.fromI32(1746028800) // UTC 2025-05-01 00:00:00
 
 //lpDelta: is + or - value
 export function storeUserData(
