@@ -17,7 +17,11 @@
     "build-mainnet": "graph build subgraph-mainnet.yaml",
     "remove-modemax-mainnet": "graph remove --node https://graphdeploy.neonnexus.io modemax/market-stats",
     "create-modemax-mainnet": "graph create --node https://graphdeploy.neonnexus.io modemax/market-stats",
-    "deploy-modemax-mainnet": "graph deploy modemax/market-stats ./subgraph-testnet.yaml --version-label v0.0.2 --node https://graphdeploy.neonnexus.io --ipfs http://ipfs.neonnexus.io"
+    "deploy-modemax-mainnet": "graph deploy modemax/market-stats ./subgraph-testnet.yaml --version-label v0.0.2 --node https://graphdeploy.neonnexus.io --ipfs http://ipfs.neonnexus.io",
+
+    "create-modemax2": "graph create --node https://graphdeploy.modemax.io modemax2/market-stats",
+    "remove-modemax2": "graph remove --node https://graphdeploy.modemax.io modemax2/market-stats",
+    "deploy-modemax2": "graph deploy modemax2/market-stats ./subgraph-testnet.yaml --version-label v0.0.1 --node https://graphdeploy.modemax.io --ipfs https://ipfs.modemax.io"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.68.5",

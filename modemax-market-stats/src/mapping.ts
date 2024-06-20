@@ -18,7 +18,7 @@ import {
 import {getAddressItem, getAddressString, getIntItem, getUintItem} from "./eventLog1Data";
 import {Transfer} from "../generated/templates/MarketTokenTemplate/MarketToken";
 import {storeLeaderboard, storeLeaderboardV2} from "./leaderBoard";
-import {saveReferalPositionRaw, storeUserData} from "./airdrop";
+import {saveReferalPositionRaw, saveUserSwap, storeUserData} from "./airdrop";
 import {MarketTokenTemplate} from "../generated/templates";
 import {
   GovSetCodeOwner,
@@ -280,7 +280,15 @@ export function handleEventLog1(event: EventLog1): void {
       }
     }
   }
-  return;
+
+  if (eventName == 'SwapInfo') {
+    let account = getAddressString("receiver",eventData)!;
+    const price = getUintItem('tokenInPrice', eventData)!;
+    const amount = getUintItem('amountIn', eventData)!;
+    const tokenAddr = getAddressString("tokenIn", eventData)!;
+    let timestamp = event.block.timestamp;
+    saveUserSwap(account, tokenAddr, price, amount, timestamp);
+  }
 }
 
 export function handleMarketTokenTransfer(event: Transfer): void {

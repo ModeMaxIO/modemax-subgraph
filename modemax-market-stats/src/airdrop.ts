@@ -1,4 +1,4 @@
-import {BigInt, log} from "@graphprotocol/graph-ts";
+import {BigDecimal, BigInt, log} from "@graphprotocol/graph-ts";
 import {
     AirdropConfig,
     ReferalPositionRaw,
@@ -54,15 +54,15 @@ function _storeUserDataByType(
         userData.tradingVolume = userData.tradingVolume.plus(tradingVolumeDelta);
         //Just for CP
         userData.traderProfit = userData.traderProfit.plus(traderProfitDelta);
-    }else if(actionType == "decreasePosition"){
+    } else if (actionType == "decreasePosition") {
         userData.tradingVolume = userData.tradingVolume.plus(tradingVolumeDelta);
         //Just for CP
         userData.traderProfit = userData.traderProfit.plus(traderProfitDelta);
-    }else if(actionType == "updatePosition"){
+    } else if (actionType == "updatePosition") {
         userData.traderProfit = userData.traderProfit.plus(traderProfitDelta);
-    }else if(actionType == "liquidatePosition"){
+    } else if (actionType == "liquidatePosition") {
         userData.traderProfit = userData.traderProfit.plus(traderProfitDelta);
-    }else if(actionType == "closePosition"){
+    } else if (actionType == "closePosition") {
         userData.traderProfit = userData.traderProfit.plus(traderProfitDelta);
     } else if(actionType == "addLiquidity" || actionType=="removeLiquidity"){
         userData.lp = userData.lp.plus(lpDelta);
@@ -86,7 +86,7 @@ function saveUserLiquidity(
     let entryId = activityStartTime.toString()+":"+account;
     let entryEntity = _getOrCreateUserLiquidityEntry(entryId);
 
-    let id = account+":"+timestamp.toString();
+    let id = account + ":" + timestamp.toString();
     let lqEntity = _getOrCreateUserLiquidity(id);
 
     id = account;
@@ -128,7 +128,7 @@ function _getOrCreateUserData(account :string,period:string,timestamp:BigInt):Us
         id = "day:"+timestamp.toString()+":"+account;
     }
     let entity = UserData.load(id);
-    if(entity == null){
+    if (entity == null) {
         entity = new UserData(id);
         entity.account = account;
 
@@ -136,6 +136,7 @@ function _getOrCreateUserData(account :string,period:string,timestamp:BigInt):Us
         entity.tradingVolume = ZERO;
         entity.lp = ZERO;
         entity.referral = ZERO;
+        entity.swap = BigDecimal.fromString('0');
 
         entity.period = period;
         entity.timestamp = timestamp.toI32();
@@ -143,9 +144,9 @@ function _getOrCreateUserData(account :string,period:string,timestamp:BigInt):Us
     return entity as UserData;
 }
 
-function _getOrCreateUserLiquidityEntry(id:string):UserLiquidityEntry{
+function _getOrCreateUserLiquidityEntry(id: string): UserLiquidityEntry {
     let entity = UserLiquidityEntry.load(id);
-    if(entity == null){
+    if (entity == null) {
         entity = new UserLiquidityEntry(id);
         entity.account = "";
         entity.timestamp = ZERO.toI32();
@@ -153,12 +154,12 @@ function _getOrCreateUserLiquidityEntry(id:string):UserLiquidityEntry{
     return entity as UserLiquidityEntry;
 }
 
-function _getOrCreateUserLiquidity(id:string):UserLiquidity{
+function _getOrCreateUserLiquidity(id: string): UserLiquidity {
     let entity = UserLiquidity.load(id);
-    if(entity == null){
+    if (entity == null) {
         entity = new UserLiquidity(id);
         entity.account = "";
-        entity.balance= ZERO;
+        entity.balance = ZERO;
         entity.sizeDelta = ZERO;
         entity.lpPointsThis = ZERO;
         entity.lpPointsNext = ZERO;
@@ -168,12 +169,12 @@ function _getOrCreateUserLiquidity(id:string):UserLiquidity{
     return entity as UserLiquidity;
 }
 
-function _getOrCreateUserLiquidityTotal(id:string):UserLiquidityTotal{
+function _getOrCreateUserLiquidityTotal(id: string): UserLiquidityTotal {
     let entity = UserLiquidityTotal.load(id);
-    if(entity == null){
+    if (entity == null) {
         entity = new UserLiquidityTotal(id);
         entity.account = "";
-        entity.lp= ZERO;
+        entity.lp = ZERO;
         entity.lpPointsThis = ZERO;
         entity.timestamp = ZERO.toI32();
     }
@@ -209,4 +210,36 @@ export function saveReferalPositionRaw(id: string,
     entity.timestamp = timestamp;
     entity.version = version;
     entity.save();
+}
+
+export function saveUserSwap(account: string, tokenAddr: string, price: BigInt, amount: BigInt, timestamp: BigInt): void {
+    _storeAirdropConfig();
+    const addedAmount = price.times(amount).toBigDecimal().div(BigDecimal.fromString(BigInt.fromI32(10).pow(30 as u8).toString()));
+    if (timestamp.ge(EPOCH_START_TIME) && timestamp.le(EPOCH_END_TIME)) {
+        // account
+        {
+            let userData = _getOrCreateUserData(account, 'account', EPOCH_START_TIME);
+
+            userData.swap = userData.swap.plus(
+                addedAmount
+            );
+            userData.save();
+        }
+        // day
+        {
+            let userData = _getOrCreateUserData(account, 'day', BigInt.fromString(_getDayId(timestamp)));
+            userData.swap = userData.swap.plus(
+                addedAmount
+            );
+            userData.save();
+        }
+        // total
+        {
+            let userData = _getOrCreateUserData(account, 'total', EPOCH_START_TIME);
+            userData.swap = userData.swap.plus(
+                addedAmount
+            );
+            userData.save();
+        }
+    }
 }
