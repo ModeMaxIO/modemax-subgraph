@@ -1,0 +1,21 @@
+{
+  "name": "lp",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ modemax/lp",
+    "create-local": "graph create --node http://localhost:8020/ modemax/lp",
+    "remove-local": "graph remove --node http://localhost:8020/ modemax/lp",
+    "deploy-local": "graph deploy --version-label v0.0.1 --node http://localhost:8020/ --ipfs http://localhost:5001 modemax/lp",
+    "create-test": "graph create --node https://graphdeploy.modemax.io modemax/lp",
+    "remove-test": "graph remove --node https://graphdeploy.modemax.io modemax/lp",
+    "deploy-test": "graph deploy --version-label v0.0.1 --node https://graphdeploy.modemax.io --ipfs https://ipfs.modemax.io modemax/lp",
+    "test": "graph test"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.78.0",
+    "@graphprotocol/graph-ts": "0.32.0"
+  },
+  "devDependencies": { "matchstick-as": "0.5.0" }
+}

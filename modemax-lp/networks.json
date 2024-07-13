@@ -1,0 +1,8 @@
+{
+  "mainnet": {
+    "EventEmitter": {
+      "address": "0x7E904F62253B09c183Ed0b9806C4902c296F7038",
+      "startBlock": 8499007
+    }
+  }
+}
