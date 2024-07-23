@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 description: MODE_MAX
 repository: https://github.com/gmx-io/gmx-subgraph
 schema:

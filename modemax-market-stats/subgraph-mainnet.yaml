@@ -7,11 +7,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: GlpManager
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: '0x3993193bc1226e38d215d5572032fa5D626C01Cf'
+      address: '0xbD32D2b19049Fc4ce12E537620907a6Aa0458C80'
       abi: GlpManager
-      startBlock: 16462458
+      startBlock: 10651632
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -32,11 +32,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: Vault2
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: '0x53B1a1557264dD51cfA8c35c05BB6aaE5b45FD17'
+      address: '0x522673d3363401799Ee13b3599Ca67827A930c39'
       abi: Vault
-      startBlock: 16462415
+      startBlock: 10651597
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -64,11 +64,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: EventEmitter
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: "0x9cF87fA6835d7413aB67f08bCE95fe444EdECf6D"
+      address: "0xd63352120c45378682d705f42a9F085E79E3c888"
       abi: EventEmitter
-      startBlock: 14217525
+      startBlock: 10689910
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -85,31 +85,40 @@ dataSources:
         - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
           handler: handleEventLog1
       file: ./src/mapping.ts
+
+
   - kind: ethereum/contract
-    name: FastPriceEvents
-    network: mainnet
+    name: ReferralStorage
+    network: mode-mainnet
     source:
-      address: '0x89A8965D02c5021AbEE43C46b19Fc1Bb8beB9A86'
-      abi: FastPriceEvents
-      startBlock: 16477688
+      address: '0x301067B97FED258EeE42b502d8fF94a30f7d0365'
+      abi: ReferralStorage
+      startBlock: 10655820
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
       language: wasm/assemblyscript
       entities:
-        - ActivityInfo
+        - ReferralCode
+        - TraderToReferralCode
       abis:
-        - name: FastPriceEvents
-          file: ./abis/FastPriceEvents.json
+        - name: ReferralStorage
+          file: ./abis/ReferralStorage.json
       eventHandlers:
-        - event: PriceUpdate(address,uint256,address)
-          handler: handlePriceUpdate
+        - event: GovSetCodeOwner(bytes32,address)
+          handler: handleGovSetCodeOwner
+        - event: RegisterCode(address,bytes32)
+          handler: handleRegisterCode
+        - event: SetCodeOwner(address,address,bytes32)
+          handler: handleSetCodeOwner
+        - event: SetTraderReferralCode(address,bytes32)
+          handler: handleSetTraderReferralCode
       file: ./src/mapping.ts
 
 templates:
   - kind: ethereum/contract
     name: MarketTokenTemplate
-    network: mainnet
+    network: mode-mainnet
     source:
       abi: MarketToken
     mapping:

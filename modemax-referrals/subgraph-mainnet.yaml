@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: OrderBook
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: '0xCa65d4b7565eED8060FEf70a7F3879f881DF2dA6'
+      address: '0xdEA213aD0360eFc0547FB3149BD8f160ca1F9DFf'
       abi: OrderBook
-      startBlock: 16464266
+      startBlock: 10656376
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -25,11 +25,11 @@ dataSources:
 
   - kind: ethereum/contract
     name: BatchSender
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: '0x44f3c064426cfb225720E9BB21F4301222126f3a'
+      address: '0x44C40C65297348c4e03C937cec256765E1d5A379'
       abi: BatchSender
-      startBlock: 16478316
+      startBlock: 10684213
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -46,11 +46,11 @@ dataSources:
 
   - kind: ethereum/contract
     name: PositionManager
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: '0xfAA656b30fDd0646Cc1BdD42A4882C79155f5287'
+      address: '0x5323f3aeECe5eDBE1696fDfAde452268a75E284E'
       abi: PositionManager
-      startBlock: 16466313
+      startBlock: 10656524
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -70,11 +70,11 @@ dataSources:
 
   - kind: ethereum/contract
     name: PositionRouter
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: '0x1118Fa15aF11Eea68B500dD53dEf178e77f7fFa9'
+      address: '0xef3729B291ad10e45807Cd68DEDd61109e0c680C'
       abi: PositionRouter
-      startBlock: 16464107
+      startBlock: 10656054
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -94,11 +94,11 @@ dataSources:
 
   - kind: ethereum/contract
     name: ReferralStorage
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: '0x241836bFddfC808FEE0D195979c2a1084A2191A2'
+      address: '0x301067B97FED258EeE42b502d8fF94a30f7d0365'
       abi: ReferralStorage
-      startBlock: 16463308
+      startBlock: 10655820
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -134,11 +134,11 @@ dataSources:
 
   - kind: ethereum/contract
     name: EventEmitter
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: "0x9cF87fA6835d7413aB67f08bCE95fe444EdECf6D"
+      address: "0xd63352120c45378682d705f42a9F085E79E3c888"
       abi: EventEmitter
-      startBlock: 14217525
+      startBlock: 10689910
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -154,66 +154,106 @@ dataSources:
         - event: EventLog2(address,string,indexed string,indexed bytes32,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
           handler: handleEventLog2
       file: ./src/mapping.ts
+  # - kind: ethereum/contract
+  #   name: ChainlinkAggregatorWETH
+  #   network: mode-mainnet
+  #   source:
+  #     address: '0x2A8D0136347b3667ba600e6F985aEC971A97A9E0'
+  #     abi: ChainlinkAggregator4Supra
+  #     startBlock: 14166301
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ChainlinkPrice
+  #     abis:
+  #       - name: ChainlinkAggregator4Supra
+  #         file: ./abis/ChainlinkAggregator4Supra.json
+  #     eventHandlers:
+  #       - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+  #         handler: handleAnswerUpdated
+  #     file: ./src/mapping.ts
+  # - kind: ethereum/contract
+  #   name: ChainlinkAggregatorETH
+  #   network: mode-mainnet
+  #   source:
+  #     address: '0xFbd9Ed03Dc4a35F896CBb2939E6495a297777DB9'
+  #     abi: ChainlinkAggregator4Supra
+  #     startBlock: 14214491
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ChainlinkPrice
+  #     abis:
+  #       - name: ChainlinkAggregator4Supra
+  #         file: ./abis/ChainlinkAggregator4Supra.json
+  #     eventHandlers:
+  #       - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+  #         handler: handleAnswerUpdated
+  #     file: ./src/mapping.ts
+  # - kind: ethereum/contract
+  #   name: ChainlinkAggregatorMODE
+  #   network: mode-mainnet
+  #   source:
+  #     address: '0xb18Bc449665E920dbA132974c9d43132A016Dc9f'
+  #     abi: ChainlinkAggregator4Supra
+  #     startBlock: 14166308
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ChainlinkPrice
+  #     abis:
+  #       - name: ChainlinkAggregator4Supra
+  #         file: ./abis/ChainlinkAggregator4Supra.json
+  #     eventHandlers:
+  #       - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+  #         handler: handleAnswerUpdated
+  #     file: ./src/mapping.ts
 
+  # - kind: ethereum/contract
+  #   name: ChainlinkAggregatorBTC
+  #   network: mode-mainnet
+  #   source:
+  #     address: '0x3FbA88708B3527f5FF7Cb5E20dCEb61ECe6eBc99'
+  #     abi: ChainlinkAggregator4Supra
+  #     startBlock: 14166292
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ChainlinkPrice
+  #     abis:
+  #       - name: ChainlinkAggregator4Supra
+  #         file: ./abis/ChainlinkAggregator4Supra.json
+  #     eventHandlers:
+  #       - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+  #         handler: handleAnswerUpdated
+  #     file: ./src/mapping.ts
+templates:
   - kind: ethereum/contract
-    name: ChainlinkAggregatorETH
-    network: mainnet
+    name: MarketTokenTemplate
+    network: mode-mainnet
     source:
-      address: '0x8f1ba66d30a1f01bd766eB3Bab0E8AfBeE164252'
-      abi: ChainlinkAggregator4Supra
-      startBlock: 15481868
+      abi: MarketToken
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
       language: wasm/assemblyscript
       entities:
-        - ChainlinkPrice
+        - LeaderboardData
+        - UserData
+        - UserRewardStatus
       abis:
-        - name: ChainlinkAggregator4Supra
-          file: ./abis/ChainlinkAggregator4Supra.json
+        - name: MarketToken
+          file: ./abis/MarketToken.json
       eventHandlers:
-        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
-          handler: handleAnswerUpdated
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleMarketTokenTransfer
       file: ./src/mapping.ts
-
-  - kind: ethereum/contract
-    name: ChainlinkAggregatorSYS
-    network: mainnet
-    source:
-      address: '0x9Dff2CeBccA79F9090340604b58612fc3e818DCb'
-      abi: ChainlinkAggregator4Supra
-      startBlock: 15482071
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - ChainlinkPrice
-      abis:
-        - name: ChainlinkAggregator4Supra
-          file: ./abis/ChainlinkAggregator4Supra.json
-      eventHandlers:
-        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
-          handler: handleAnswerUpdated
-      file: ./src/mapping.ts
-
-  - kind: ethereum/contract
-    name: ChainlinkAggregatorBTC
-    network: mainnet
-    source:
-      address: '0xB921aEe0abD048E2FDd1E15aB2ddFBE589884522'
-      abi: ChainlinkAggregator4Supra
-      startBlock: 15481873
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - ChainlinkPrice
-      abis:
-        - name: ChainlinkAggregator4Supra
-          file: ./abis/ChainlinkAggregator4Supra.json
-      eventHandlers:
-        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
-          handler: handleAnswerUpdated
-      file: ./src/mapping.ts
+  

@@ -59,6 +59,7 @@ type AffiliateStat @entity {
   trades: BigInt!
   tradesCumulative: BigInt!
   tradedReferrals: [TradedReferral!]! @derivedFrom(field: "affiliateStat")
+  # traded or swapped or addedLp when period = 'total' ## new requirement
   tradedReferralsCount: BigInt!
   tradedReferralsCountCumulative: BigInt!
   registeredReferrals: [RegisteredReferral!]!
@@ -93,6 +94,8 @@ type ReferralCode @entity {
   id: ID!
   code: String!
   owner: String!
+  traders: [TraderToReferralCode!]! @derivedFrom(field: "referralCode")
+  traderLatestIndex: Int!
 }
 
 type TradedReferral @entity {
@@ -110,6 +113,8 @@ type RegisteredReferral @entity {
 type TraderToReferralCode @entity {
   id: ID!
   referralCode: ReferralCode!
+  index: Int!
+  timestamp: Int!
 }
 
 type ReferralStat @entity {

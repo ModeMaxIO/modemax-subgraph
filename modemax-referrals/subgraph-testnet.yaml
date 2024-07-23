@@ -235,3 +235,25 @@ dataSources:
         - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
           handler: handleAnswerUpdated
       file: ./src/mapping.ts
+templates:
+  - kind: ethereum/contract
+    name: MarketTokenTemplate
+    network: mainnet
+    source:
+      abi: MarketToken
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - LeaderboardData
+        - UserData
+        - UserRewardStatus
+      abis:
+        - name: MarketToken
+          file: ./abis/MarketToken.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleMarketTokenTransfer
+      file: ./src/mapping.ts
+  

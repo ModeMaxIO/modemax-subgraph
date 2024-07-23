@@ -11,9 +11,9 @@ import {
   SetTier,
   SetTraderReferralCode,
 } from "../generated/ReferralStorage/ReferralStorage";
-import {
-  AnswerUpdated as AnswerUpdatedEvent
-} from '../generated/ChainlinkAggregatorETH/ChainlinkAggregator4Supra'
+// import {
+//   AnswerUpdated as AnswerUpdatedEvent
+// } from '../generated/ChainlinkAggregatorETH/ChainlinkAggregator4Supra'
 import {
   IncreasePositionReferral,
   DecreasePositionReferral,
@@ -46,6 +46,8 @@ import {
   EventLogEventDataStruct,
 } from "../generated/EventEmitter/EventEmitter";
 import { getTokenByPriceFeed, getTokenDecimals } from "./tokens";
+import { MarketTokenTemplate } from "../generated/templates";
+import { Transfer as TransferEvent} from "../generated/templates/MarketTokenTemplate/MarketToken"
 
 class AffiliateResult {
   created: boolean;
@@ -80,16 +82,22 @@ export function handleEventLog2(event: EventLog2): void {
   }
 }
 
-export function handleAnswerUpdated(event: AnswerUpdatedEvent): void {
-  let tokens = getTokenByPriceFeed(event.address.toHexString());
-  _storeChainlinkPrice(tokens, event.params.current)
-}
+// export function handleAnswerUpdated(event: AnswerUpdatedEvent): void {
+//   let tokens = getTokenByPriceFeed(event.address.toHexString());
+//   _storeChainlinkPrice(tokens, event.params.current)
+// }
 
 export function handleEventLog1(event: EventLog1): void {
   let eventName = event.params.eventName;
   let eventData = new EventData(
     event.params.eventData as EventLogEventDataStruct
   );
+
+  if (eventName == "MarketCreated") {
+    let marketToken = eventData.getAddressItem("marketToken")!
+    MarketTokenTemplate.create(marketToken);
+    return;
+  }
 
   if (eventName == "PositionIncrease" || eventName == "PositionDecrease") {
     let account = eventData.getAddressItem("account")!;
@@ -127,6 +135,21 @@ export function handleEventLog1(event: EventLog1): void {
       typeId
     );
     return;
+  } else if (eventName == "SwapInfo") {
+    let account = eventData.getAddressItem("account")!;
+    let traderToReferralCode = TraderToReferralCode.load(account.toHexString());
+    if (traderToReferralCode == null) {
+      return;
+    }
+    let referralCode = traderToReferralCode.referralCode;
+    let referralCodeEntity = ReferralCode.load(referralCode!);
+    let affiliate = referralCodeEntity!.owner;
+    _storeAffiliateStatsTotalSimple(
+      event.block.timestamp,
+      account,
+      referralCode.toString(),
+      Address.fromString(affiliate)
+    )
   }
 }
 
@@ -259,6 +282,7 @@ function _registerCode(timestamp: BigInt, code: Bytes, owner: Address): void {
   let referralCodeEntity = new ReferralCode(code.toHexString());
   referralCodeEntity.owner = owner.toHexString();
   referralCodeEntity.code = code.toHex();
+  referralCodeEntity.traderLatestIndex = 0;
   referralCodeEntity.save();
 
   let totalAffiliateStat = _getOrCreateAffiliateStat(
@@ -361,8 +385,12 @@ export function handleSetTraderReferralCode(
   let traderToReferralCode = new TraderToReferralCode(
     event.params.account.toHexString()
   );
+  traderToReferralCode.index = referralCodeEntity.traderLatestIndex;
+  traderToReferralCode.timestamp = event.block.timestamp.toI32();
   traderToReferralCode.referralCode = event.params.code.toHexString();
   traderToReferralCode.save();
+  referralCodeEntity.traderLatestIndex++;
+  referralCodeEntity.save();
 
   let timestamp = event.block.timestamp;
 
@@ -676,6 +704,27 @@ function _createAffiliateStatData(
   return entity;
 }
 
+function _storeAffiliateStatsTotalSimple(
+  timestamp: BigInt,
+  referral: Address,
+  referralCode: string,
+  affiliate: Address
+): void {
+  const period = 'total';
+  let entity = _getOrCreateAffiliateStat(
+    timestamp,
+    period,
+    affiliate,
+    referralCode
+  );
+  let isNewReferral = _createTradedReferralIfNotExist(entity.id, referral);
+
+  if (isNewReferral) {
+    entity.tradedReferralsCount += BigInt.fromI32(1);
+  }
+  entity.save();
+}
+
 function _storeAffiliateStats(
   timestamp: BigInt,
   period: string,
@@ -694,6 +743,7 @@ function _storeAffiliateStats(
     affiliate,
     referralCode
   );
+  // is traded or swapped or addedLp
   let isNewReferral = _createTradedReferralIfNotExist(entity.id, referral);
 
   if (isNewReferral) {
@@ -946,4 +996,32 @@ function _getAmountInUsd(tokenAddress: string, amount: BigInt): BigInt {
   // 30 USD decimals
   // 8 Chainlink decimals
   return amount.times(price.value).times(BigInt.fromI32(10).pow(22 - decimals as u8))
+}
+
+export function handleMarketTokenTransfer(event: TransferEvent): void {
+  let from = event.params.from.toHexString();
+  let to = event.params.to.toHexString();
+  let value = event.params.value;
+  // from != ZERO_ADDRESS -> remove; to != ZERO_ADDRESS -> add
+  if (from != ZERO_ADDRESS || to != ZERO_ADDRESS) {
+    
+    let account = from;
+    if (to != ZERO_ADDRESS) {
+      account = to;
+    }
+    let traderToReferralCode = TraderToReferralCode.load(account);
+    if (traderToReferralCode == null) {
+      return;
+    }
+    let referralCode = traderToReferralCode.referralCode;
+    let referralCodeEntity = ReferralCode.load(referralCode!);
+    let affiliate = referralCodeEntity!.owner;
+
+    _storeAffiliateStatsTotalSimple(
+      event.block.timestamp,
+      Address.fromString(account),
+      referralCode,
+      Address.fromString(affiliate)
+    )
+  }
 }

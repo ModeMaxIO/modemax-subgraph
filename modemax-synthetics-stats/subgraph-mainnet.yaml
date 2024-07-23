@@ -1,4 +1,4 @@
-specVersion: 0.0.2
+specVersion: 0.0.4
 description: MODE_MAX
 repository: https://github.com/gmx-io/gmx-subgraph
 schema:
@@ -7,11 +7,11 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: EventEmitter
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: "0x9cF87fA6835d7413aB67f08bCE95fe444EdECf6D"
+      address: "0xd63352120c45378682d705f42a9F085E79E3c888"
       abi: EventEmitter
-      startBlock: 14217525
+      startBlock: 10689910
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -36,18 +36,18 @@ dataSources:
         - event: EventLog(address,string,indexed string,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
           handler: handleEventLog
         - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
-          handler: handleEventLog1Rollux
+          handler: handleEventLog1Mode
 #          handler: handleEventLog1Arbitrum
         - event: EventLog2(address,string,indexed string,indexed bytes32,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
           handler: handleEventLog2Arbitrum
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: Vault
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: "0x53B1a1557264dD51cfA8c35c05BB6aaE5b45FD17"
+      address: "0x522673d3363401799Ee13b3599Ca67827A930c39"
       abi: Vault
-      startBlock: 16462415
+      startBlock: 10651597
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -63,11 +63,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: GlpManager
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: "0x3993193bc1226e38d215d5572032fa5D626C01Cf"
+      address: "0xbD32D2b19049Fc4ce12E537620907a6Aa0458C80"
       abi: GlpManager
-      startBlock: 16462458
+      startBlock: 10651632
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -83,11 +83,11 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: BatchSender
-    network: mainnet
+    network: mode-mainnet
     source:
-      address: "0x44f3c064426cfb225720E9BB21F4301222126f3a"
+      address: "0x44C40C65297348c4e03C937cec256765E1d5A379"
       abi: BatchSender
-      startBlock: 16478316
+      startBlock: 10684213
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -103,7 +103,7 @@ dataSources:
       file: ./src/mapping.ts
 #  - kind: ethereum/contract
 #    name: BatchSenderNew
-#    network: mainnet
+#    network: mode-mainnet
 #    source:
 #      address: "0x5384E6cAd96B2877B5B3337A277577053BD1941D"
 #      abi: BatchSender
@@ -125,7 +125,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: MarketTokenTemplate
-    network: mainnet
+    network: mode-mainnet
     source:
       abi: MarketToken
     mapping:
