@@ -24,6 +24,54 @@ dataSources:
           # specVersion >= 1.12.0
           # topic2: ['MarketCreated']
       file: ./src/event-emitter.ts
+  - kind: ethereum
+    name: ReferralStorage
+    network: mainnet
+    source:
+      address: "0x06d3584F4c5E1F631f9aa3c8f6aF7C82a9dC153C"
+      abi: ReferralStorage
+      startBlock: 14080250
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - RegisterCode
+      abis:
+        - name: ReferralStorage
+          file: ./abis/ReferralStorage.json
+      eventHandlers:
+        - event: RegisterCode(address,bytes32)
+          handler: handleRegisterCode
+        - event: SetCodeOwner(address,address,bytes32)
+          handler: handleSetCodeOwner
+        - event: GovSetCodeOwner(bytes32,address)
+          handler: handleGovSetCodeOwner
+        - event: SetTraderReferralCode(address,bytes32)
+          handler: handleSetTraderReferralCode
+      file: ./src/referral-storage.ts
+  - kind: ethereum
+    name: Vault
+    network: mainnet
+    source:
+      address: "0x03f15224338bDE82C88143E7b4251fFB40eFE575"
+      abi: Vault
+      startBlock: 14078127
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - UserStats
+      abis:
+        - name: Vault
+          file: ./abis/Vault.json
+      eventHandlers:
+        - event: IncreasePosition(bytes32,address,address,address,uint256,uint256,bool,uint256,uint256)
+          handler: handleIncreasePosition
+        - event: DecreasePosition(bytes32,address,address,address,uint256,uint256,bool,uint256,uint256)
+          handler: handleDecreasePosition
+      file: ./src/vault.ts
 templates:
   - kind: ethereum/contract
     name: MarketTokenTemplate

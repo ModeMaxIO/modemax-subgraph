@@ -19,3 +19,27 @@ type UserLiquiditySnap @entity(immutable: true) {
   lp: BigInt!
   basePoints: BigInt!
 }
+
+type UserStat @entity {
+  # account
+  id: ID!
+  lp: BigDecimal!
+  swap: BigDecimal!
+  trade: BigDecimal!
+  referral: BigDecimal!
+}
+
+type ReferralCode @entity {
+  id: ID!
+  code: String!
+  owner: String!
+  traders: [TraderToReferralCode!]! @derivedFrom(field: "referralCode")
+  traderLatestIndex: Int!
+}
+
+type TraderToReferralCode @entity {
+  id: ID!
+  referralCode: ReferralCode!
+  index: Int!
+  timestamp: Int!
+}

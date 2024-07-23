@@ -11,10 +11,13 @@
     "create-test": "graph create --node https://graphdeploy.modemax.io modemax/lp",
     "remove-test": "graph remove --node https://graphdeploy.modemax.io modemax/lp",
     "deploy-test": "graph deploy --version-label v0.0.1 --node https://graphdeploy.modemax.io --ipfs https://ipfs.modemax.io modemax/lp",
+    "create-test1": "graph create --node https://graphdeploy.modemax.io modemax/lp1",
+    "remove-test1": "graph remove --node https://graphdeploy.modemax.io modemax/lp1",
+    "deploy-test1": "graph deploy --version-label v0.0.1 --node https://graphdeploy.modemax.io --ipfs https://ipfs.modemax.io modemax/lp1",
     "test": "graph test",
 
     "build-mainnet": "graph build subgraph-main.yaml",
-    "remove-mainnet": "goldsky subgraph remove modemax-lp/v0.0.1",
+    "remove-mainnet": "goldsky subgraph delete modemax-lp/v0.0.1",
     "deploy-mainnet": "goldsky subgraph deploy modemax-lp/v0.0.1"
   },
   "dependencies": {

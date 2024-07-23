@@ -1,7 +1,8 @@
-import { BigInt } from '@graphprotocol/graph-ts';
+import { BigDecimal, BigInt } from '@graphprotocol/graph-ts';
 import { Transfer as TransferEvent } from '../generated/templates/MarketTokenTemplate/MarketToken'
-import { ZeroAddress } from './const';
+import { DECIMAL18, ZeroAddress } from './const';
 import { createUserLiquiditySnap, loadOrCreateUserLiquidity } from './schema';
+import { loadOrCreateUserStat } from './event-emitter-schema-helper';
 
 export function handleMarketTokenTransfer(event: TransferEvent): void {
   let from = event.params.from.toHexString();
@@ -31,4 +32,7 @@ function _storeUserLiquidity(account: string, timestamp: i32, value: BigInt): vo
   userLiquidity.lp = userLiquidity.lp.plus(value);
   userLiquidity.save();
   createUserLiquiditySnap(account, userLiquidity.latesUpdateTimestamp, userLiquidity.lp, userLiquidity.basePoints);
+  const userData = loadOrCreateUserStat(account);
+  userData.lp = userLiquidity.lp.toBigDecimal().div(DECIMAL18);
+  userData.save();
 }
