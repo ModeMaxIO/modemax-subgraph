@@ -17,8 +17,9 @@
     "remove-modemax2": "graph remove --node https://graphdeploy.modemax.io modemax2/market-stats",
     "deploy-modemax2": "graph deploy modemax2/market-stats ./subgraph-testnet.yaml --version-label v0.0.1 --node https://graphdeploy.modemax.io --ipfs https://ipfs.modemax.io",
 
+    "codegen-mainnet": "graph codegen subgraph-mainnet.yaml",
     "build-mainnet": "graph build subgraph-mainnet.yaml",
-    "remove-mainnet": "goldsky subgraph remove modemax-market-stats/v0.0.1",
+    "remove-mainnet": "goldsky subgraph delete modemax-market-stats/v0.0.1",
     "deploy-mainnet": "goldsky subgraph deploy modemax-market-stats/v0.0.1"
   },
   "dependencies": {

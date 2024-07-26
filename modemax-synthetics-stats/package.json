@@ -15,7 +15,7 @@
 
     "codegen-mainnet": "graph codegen subgraph-mainnet.yaml",
     "build-mainnet": "graph build subgraph-mainnet.yaml",
-    "remove-mainnet": "goldsky subgraph remove modemax-synthetics-stats/v0.0.1",
+    "remove-mainnet": "goldsky subgraph delete modemax-synthetics-stats/v0.0.1",
     "deploy-mainnet": "goldsky subgraph deploy modemax-synthetics-stats/v0.0.1"
   },
   "dependencies": {

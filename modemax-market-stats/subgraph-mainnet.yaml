@@ -34,9 +34,9 @@ dataSources:
     name: Vault2
     network: mode-mainnet
     source:
-      address: '0x522673d3363401799Ee13b3599Ca67827A930c39'
+      address: '0x6824AbeA9D564e469B8FAaA0300b04cAFdD78341'
       abi: Vault
-      startBlock: 10651597
+      startBlock: 10811593
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6
@@ -91,9 +91,9 @@ dataSources:
     name: ReferralStorage
     network: mode-mainnet
     source:
-      address: '0x301067B97FED258EeE42b502d8fF94a30f7d0365'
+      address: '0x8ADde0016CA99ED6f41056b26A6D9946168389A7'
       abi: ReferralStorage
-      startBlock: 10655820
+      startBlock: 10812458
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.6

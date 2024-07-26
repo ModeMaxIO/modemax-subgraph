@@ -39,15 +39,15 @@ dataSources:
           handler: handleEventLog1Mode
 #          handler: handleEventLog1Arbitrum
         - event: EventLog2(address,string,indexed string,indexed bytes32,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
-          handler: handleEventLog2Arbitrum
+          handler: handleEventLog2Mode
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: Vault
     network: mode-mainnet
     source:
-      address: "0x522673d3363401799Ee13b3599Ca67827A930c39"
+      address: "0x6824AbeA9D564e469B8FAaA0300b04cAFdD78341"
       abi: Vault
-      startBlock: 10651597
+      startBlock: 10811593
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
@@ -85,9 +85,9 @@ dataSources:
     name: BatchSender
     network: mode-mainnet
     source:
-      address: "0x44C40C65297348c4e03C937cec256765E1d5A379"
+      address: "0x951dB55D544FcfE5a3e25A91c5D8c695aDA63aB2"
       abi: BatchSender
-      startBlock: 10684213
+      startBlock: 10815873
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.4
