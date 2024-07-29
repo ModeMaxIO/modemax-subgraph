@@ -7,7 +7,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: EventEmitter
-    network: mainnet
+    network: mode-testnet
     source:
       address: "0x33C11F7Fb85EB746BF99FCeF3fc0e4bC56d7e76c"
       abi: EventEmitter
@@ -42,7 +42,7 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: Vault
-    network: mainnet
+    network: mode-testnet
     source:
       address: "0x03f15224338bDE82C88143E7b4251fFB40eFE575"
       abi: Vault
@@ -62,7 +62,7 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: GlpManager
-    network: mainnet
+    network: mode-testnet
     source:
       address: "0x3E0dd58c412982dE0B4e55A569f8Eb298147d3Cc"
       abi: GlpManager
@@ -82,7 +82,7 @@ dataSources:
       file: ./src/mapping.ts
   - kind: ethereum/contract
     name: BatchSender
-    network: mainnet
+    network: mode-testnet
     source:
       address: "0x3C1AbC80cc4dCA0021431956b4d98c24a6783E36"
       abi: BatchSender
@@ -104,7 +104,7 @@ dataSources:
 templates:
   - kind: ethereum/contract
     name: MarketTokenTemplate
-    network: mainnet
+    network: mode-testnet
     source:
       abi: MarketToken
     mapping:
