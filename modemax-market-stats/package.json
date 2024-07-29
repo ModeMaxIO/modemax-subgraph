@@ -4,6 +4,7 @@
   "scripts": {
     "codegen-test": "graph codegen subgraph-testnet.yaml",
     "build-test": "graph build subgraph-testnet.yaml",
+    "deploy-test": "goldsky subgraph deploy modemax-test-market-stats/v0.0.1",
 
     "remove-modemax-dev": "graph remove --node http://127.0.0.1:8020 modemax/market-stats",
     "create-modemax-dev": "graph create --node http://127.0.0.1:8020 modemax/market-stats",
