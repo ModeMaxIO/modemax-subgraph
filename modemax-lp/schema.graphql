@@ -2,12 +2,19 @@ type MarketToken @entity(immutable: true) {
   # token address
   id: ID!
 }
+
+type ContractBundle @entity(immutable: true) {
+  # contract name
+  id: ID!
+  address: Bytes!
+}
+
 type UserLiquidity @entity {
   # account
   id: ID!
   lp: BigInt!
   basePoints: BigInt!
-  latesUpdateTimestamp: Int!
+  latestUpdateTimestamp: Int!
   snap: [UserLiquiditySnap!] @derivedFrom(field: "account")
 }
 
@@ -17,6 +24,40 @@ type UserLiquiditySnap @entity(immutable: true) {
   account: UserLiquidity!
   timestamp: Int!
   lp: BigInt!
+  basePoints: BigInt!
+}
+
+type UserTokenStake @entity {
+  id: ID!
+  token: BigInt!
+  basePoints: BigInt!
+  latestUpdateTimestamp: Int!
+  snap: [UserTokenStakeSnap!] @derivedFrom(field: "account")
+}
+
+type UserTokenStakeSnap @entity(immutable: true) {
+  # account:timestamp
+  id: ID!
+  account: UserTokenStake!
+  timestamp: Int!
+  token: BigInt!
+  basePoints: BigInt!
+}
+
+type UserEsTokenStake @entity {
+  id: ID!
+  token: BigInt!
+  basePoints: BigInt!
+  latestUpdateTimestamp: Int!
+  snap: [UserEsTokenStakeSnap!] @derivedFrom(field: "account")
+}
+
+type UserEsTokenStakeSnap @entity(immutable: true) {
+  # account:timestamp
+  id: ID!
+  account: UserEsTokenStake!
+  timestamp: Int!
+  token: BigInt!
   basePoints: BigInt!
 }
 

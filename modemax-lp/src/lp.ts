@@ -23,15 +23,15 @@ export function handleMarketTokenTransfer(event: TransferEvent): void {
 
 function _storeUserLiquidity(account: string, timestamp: i32, value: BigInt): void {
   const userLiquidity = loadOrCreateUserLiquidity(account);
-  if (userLiquidity.latesUpdateTimestamp > 0) {
-    const gainedPointBase = userLiquidity.lp.times(BigInt.fromI32(timestamp - userLiquidity.latesUpdateTimestamp));
+  if (userLiquidity.latestUpdateTimestamp > 0) {
+    const gainedPointBase = userLiquidity.lp.times(BigInt.fromI32(timestamp - userLiquidity.latestUpdateTimestamp));
     userLiquidity.basePoints = userLiquidity.basePoints.plus(gainedPointBase);
   }
   // update
-  userLiquidity.latesUpdateTimestamp = timestamp;
+  userLiquidity.latestUpdateTimestamp = timestamp;
   userLiquidity.lp = userLiquidity.lp.plus(value);
   userLiquidity.save();
-  createUserLiquiditySnap(account, userLiquidity.latesUpdateTimestamp, userLiquidity.lp, userLiquidity.basePoints);
+  createUserLiquiditySnap(account, userLiquidity.latestUpdateTimestamp, userLiquidity.lp, userLiquidity.basePoints);
   const userData = loadOrCreateUserStat(account);
   userData.lp = userLiquidity.lp.toBigDecimal().div(DECIMAL18);
   userData.save();

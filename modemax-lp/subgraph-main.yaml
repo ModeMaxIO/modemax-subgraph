@@ -1,4 +1,4 @@
-specVersion: 0.0.4
+specVersion: 0.0.8
 schema:
   file: ./schema.graphql
 dataSources:
@@ -72,6 +72,67 @@ dataSources:
         - event: DecreasePosition(bytes32,address,address,address,uint256,uint256,bool,uint256,uint256)
           handler: handleDecreasePosition
       file: ./src/vault.ts
+  - kind: ethereum
+    name: Token
+    network: mode-mainnet
+    source:
+      address: "0x773cCa619ba9AB46D67E51Fe91C8466A001D6613" # MOX
+      abi: ERC20
+      startBlock: 10809873
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - UserTokenStake
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/token.ts
+  - kind: ethereum
+    name: EsToken
+    network: mode-mainnet
+    source:
+      address: "0xf7Ab8BC0565690adaDa7c85f2A6DdA6D56e212c4" # esMOX
+      abi: ERC20
+      startBlock: 10813425
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - UserEsTokenStake
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+      file: ./src/es-token.ts
+  - kind: ethereum
+    name: StakedToken
+    network: mode-mainnet
+    source:
+      address: "0xb06C8b68c7cf719b134cDD437B7A5129f564A5C2"
+      abi: RewardTracker
+      startBlock: 10813838
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ContractBundle
+      abis:
+        - name: RewardTracker
+          file: ./abis/RewardTracker.json
+      blockHandlers:
+        - handler: handleOnce
+          filter:
+            kind: once
+      file: ./src/staked-token.ts
 templates:
   - kind: ethereum/contract
     name: MarketTokenTemplate

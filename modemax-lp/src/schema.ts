@@ -19,7 +19,7 @@ export function loadOrCreateUserLiquidity(account: string): UserLiquidity {
     userLiquidity = new UserLiquidity(id);
     userLiquidity.lp = BIGINT_ZERO;
     userLiquidity.basePoints = BIGINT_ZERO;
-    userLiquidity.latesUpdateTimestamp = 0;
+    userLiquidity.latestUpdateTimestamp = 0;
     userLiquidity.save();
   }
   return userLiquidity;

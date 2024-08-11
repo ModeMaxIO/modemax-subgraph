@@ -1,7 +1,8 @@
-import { BigInt } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { loadOrCreateUserStat } from "./event-emitter-schema-helper";
 import { getReferralCode, getReferralCodeOwner } from "./referral-storage-schema-helper";
-import { DECIMAL30 } from "./const";
+import { C_STAKED_TOKEN, DECIMAL30, ZeroAddress } from "./const";
+import { ContractBundle } from "../generated/schema";
 
 export function storeReferralOfUserStat(account: string, sizeDelta: BigInt): void {
   let referralCode = getReferralCode(account);
@@ -13,4 +14,19 @@ export function storeReferralOfUserStat(account: string, sizeDelta: BigInt): voi
       userStat.save();
     }
   }
+}
+
+export function createStakedTokenBundle(address: Bytes): ContractBundle {
+  const id = C_STAKED_TOKEN;
+  let b = ContractBundle.load(id);
+  if (!b) {
+    b = new ContractBundle(id);
+    b.address = address;
+    b.save();
+  }
+  return b;
+}
+
+export function loadStakedToken(): ContractBundle | null {
+  return ContractBundle.load(C_STAKED_TOKEN);
 }
