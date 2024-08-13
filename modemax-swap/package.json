@@ -1,0 +1,25 @@
+{
+  "name": "sideswap-info",
+  "license": "GPL-3.0-or-later",
+  "scripts": {
+    "codegen": "graph codegen --output-dir src/types/",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ uniswapv2/info",
+    "create-local": "graph create --node http://localhost:8020/ uniswapv2/info",
+    "remove-local": "graph remove --node http://localhost:8020/ uniswapv2/info",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 uniswapv2/info",
+    "test": "graph test",
+    "remove-mainnet": "goldsky subgraph delete modemax-swap/v0.0.1",
+    "deploy-mainnet": "goldsky subgraph deploy modemax-swap/v0.0.1"
+  },
+  "devDependencies": {
+    "@graphprotocol/graph-cli": "^0.20.0",
+    "@graphprotocol/graph-ts": "^0.20.0",
+    "@typescript-eslint/eslint-plugin": "^2.0.0",
+    "@typescript-eslint/parser": "^2.0.0",
+    "eslint": "^6.2.2",
+    "eslint-config-prettier": "^6.1.0",
+    "prettier": "^1.18.2",
+    "typescript": "^3.5.2"
+  }
+}

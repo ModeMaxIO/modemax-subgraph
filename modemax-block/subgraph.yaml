@@ -6,7 +6,7 @@ schema:
 dataSources:
   - kind: ethereum/contract
     name: ETH
-    network: mode-testnet
+    network: mode-mainnet
     source:
       address: '0xcDd475325D6F564d27247D1DddBb0DAc6fA0a5CF' # WBTC
       abi: ERC20
@@ -28,7 +28,7 @@ dataSources:
           handler: handleTransfer
   - kind: ethereum/contract
     name: SIDE
-    network: mode-testnet
+    network: mode-mainnet
     source:
       address: '0xDfc7C877a950e49D2610114102175A06C2e3167a' # MODE
       abi: ERC20
@@ -50,7 +50,7 @@ dataSources:
           handler: handleTransfer
   - kind: ethereum/contract
     name: WUSDC
-    network: mode-testnet
+    network: mode-mainnet
     source:
       address: '0xd988097fb8612cc24eeC14542bC03424c656005f' # USDC
       abi: ERC20

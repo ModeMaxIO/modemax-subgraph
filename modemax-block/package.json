@@ -9,8 +9,8 @@
     "remove-local": "graph remove --node http://localhost:8020/ uniswapv2/block",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 uniswapv2/block",
     "test": "graph test",
-    "remove-testnet": "goldsky subgraph delete modemax-block/v0.0.1",
-    "deploy-testnet": "goldsky subgraph deploy modemax-block/v0.0.1"
+    "remove-mainnet": "goldsky subgraph delete modemax-block/v0.0.1",
+    "deploy-mainnet": "goldsky subgraph deploy modemax-block/v0.0.1"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.0",
