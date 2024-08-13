@@ -1,0 +1,72 @@
+specVersion: 0.0.5
+description: zkf
+repository: https://github.com/sideswap/subgraph/block
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: ETH
+    network: mode-testnet
+    source:
+      address: '0xcDd475325D6F564d27247D1DddBb0DAc6fA0a5CF' # WBTC
+      abi: ERC20
+      startBlock: 190690
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/eth.ts
+      entities:
+        - Block
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApprove
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+  - kind: ethereum/contract
+    name: SIDE
+    network: mode-testnet
+    source:
+      address: '0xDfc7C877a950e49D2610114102175A06C2e3167a' # MODE
+      abi: ERC20
+      startBlock: 7103932
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/side.ts
+      entities:
+        - Block
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApprove
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+  - kind: ethereum/contract
+    name: WUSDC
+    network: mode-testnet
+    source:
+      address: '0xd988097fb8612cc24eeC14542bC03424c656005f' # USDC
+      abi: ERC20
+      startBlock: 190687
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mappings/wusdc.ts
+      entities:
+        - Block
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      eventHandlers:
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApprove
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
