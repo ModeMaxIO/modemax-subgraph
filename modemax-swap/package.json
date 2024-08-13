@@ -10,7 +10,9 @@
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 uniswapv2/info",
     "test": "graph test",
     "remove-mainnet": "goldsky subgraph delete modemax-swap/v0.0.1",
-    "deploy-mainnet": "goldsky subgraph deploy modemax-swap/v0.0.1"
+    "deploy-mainnet": "goldsky subgraph deploy modemax-swap/v0.0.1",
+    "remove-mainnet2": "goldsky subgraph delete modemax-swap/v0.0.2",
+    "deploy-mainnet2": "goldsky subgraph deploy modemax-swap/v0.0.2"
   },
   "devDependencies": {
     "@graphprotocol/graph-cli": "^0.20.0",

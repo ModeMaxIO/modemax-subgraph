@@ -45,6 +45,12 @@ let WHITELIST: string[] = [
   '0xdfc7c877a950e49d2610114102175a06c2e3167a', // MODE
   '0x4200000000000000000000000000000000000006', // WETH
   '0xcdd475325d6f564d27247d1dddbb0dac6fa0a5cf', // WBTC
+  '0xf0f161fda2712db8b566946122a5af183995e2ed', // USDT
+  '0x94812f2eea03a49869f95e1b5868c6f3206ee3d3', // ionUSDT
+  '0x2be717340023c9e14c1bb12cb3ecbcfd3c3fb038', // ionUSDC
+  '0xcda802a5bffaa02b842651266969a5bba0c66d3e', // MOCHAD
+  '0x2416092f143378750bb29b79ed961ab195cceea5', // ezETH
+  '0x04c0599ae5a44757c0af6f9ec3b93da8976c150a', // weETH.mode
 ]
 
 // minimum liquidity required to count towards tracked volume for pairs with small # of Lps
