@@ -1,5 +1,5 @@
 import { Address, BigDecimal, BigInt } from "@graphprotocol/graph-ts";
-import { Pair, UserLiquidity, UserLiquiditySnap } from "../../generated/schema";
+import { Pair, UserLiquidity, UserLiquiditySnap, UserSwap, UserSwapSnap } from "../../generated/schema";
 import { BD_ZERO } from "./const";
 
 export function loadOrCreateUserLiquidity(account: string): UserLiquidity {
@@ -34,5 +34,38 @@ export function createUserLiquiditySnap(account: string, timestamp: i32, lp: Big
   snap.lp = lp;
   snap.lpUSD = lpUSD;
   snap.basePoints = basePoints;
+  snap.save();
+}
+
+export function loadOrCreateUserSwap(account: string): UserSwap {
+  const id = account;
+  let userSwap = UserSwap.load(id);
+  if (!userSwap) {
+    userSwap = new UserSwap(id);
+    userSwap.swap = BD_ZERO;
+    userSwap.swapUSD = BD_ZERO;
+    userSwap.latestUpdateTimestamp = 0;
+    userSwap.save();
+  }
+  return userSwap;
+}
+
+export function createUserSwapSnap(account: string, timestamp: i32, swap: BigDecimal, swapUSD: BigDecimal): void {
+  let id = account.
+    concat(timestamp.toString());
+  let snap = UserSwapSnap.load(id);
+  let index = 0;
+  for (; snap;) {
+    snap = UserSwapSnap.load(id.concat('-').concat(index.toString()));
+    index++;
+  }
+  if (index > 0) {
+    id = id.concat('-').concat(index.toString());
+  }
+  snap = new UserSwapSnap(id);
+  snap.account = account;
+  snap.timestamp = timestamp;
+  snap.swap = swap;
+  snap.swapUSD = swapUSD;
   snap.save();
 }

@@ -39,7 +39,8 @@ export function saveTokenPrice(token: Token, pairId: string): void {
         priceUSD = token0Price.times(token0.derivedUSD);
       }
     }
-    if (priceUSD.notEqual(tokenPrice.priceUSD) && pair.reserveUSD.gt(MINIMUM_LIQUIDITY_THRESHOLD_USD)) {
+    // if (priceUSD.notEqual(tokenPrice.priceUSD) && pair.reserveUSD.gt(MINIMUM_LIQUIDITY_THRESHOLD_USD)) {
+    if (priceUSD.notEqual(tokenPrice.priceUSD)) {
       tokenPrice.priceUSD = priceUSD;
       tokenPrice.save();
     }
