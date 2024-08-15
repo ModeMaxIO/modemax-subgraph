@@ -8,3 +8,66 @@ type PairCreated @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type Token @entity {
+  id: ID!
+  name: String!
+  symbol: String!
+  decimals: Int!
+  derivedUSD: BigDecimal!
+}
+
+type Pair @entity {
+  id: ID!
+  token0: Token!
+  token1: Token!
+  reserve0: BigDecimal!
+  reserve1: BigDecimal!
+  totalSupply: BigDecimal!
+
+  reserveUSD: BigDecimal!
+}
+
+type UserLiquidity @entity {
+  # account
+  id: ID!
+  lp: BigDecimal!
+  lpUSD: BigDecimal!
+  # lpUSD * timestamp + <prev>
+  basePoints: BigDecimal!
+  latestUpdateTimestamp: Int!
+  snap: [UserLiquiditySnap!] @derivedFrom(field: "account")
+}
+
+type UserLiquiditySnap @entity(immutable: true) {
+  # account:timestamp
+  id: ID!
+  account: UserLiquidity!
+  timestamp: Int!
+  lp: BigDecimal!
+  lpUSD: BigDecimal!
+  basePoints: BigDecimal!
+}
+
+type UserSwap @entity {
+  # account
+  id: ID!
+  swap: BigDecimal!
+  swapUSD: BigDecimal!
+  latestUpdateTimestamp: Int!
+  snap: [UserSwapSnap!] @derivedFrom(field: "account")
+}
+
+type UserSwapSnap @entity(immutable: true) {
+  # account:timestamp
+  id: ID!
+  account: UserSwap!
+  timestamp: Int!
+  swap: BigDecimal!
+  swapUSD: BigDecimal!
+}
+
+type TokenPrice @entity {
+  id: ID!
+  priceUSD: BigDecimal!
+}
