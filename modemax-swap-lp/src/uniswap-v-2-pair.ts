@@ -16,7 +16,7 @@ export function handleSwap(event: SwapEvent): void {
     return;
   }
   const token0 = Token.load(pair.token0);
-  if (!token0) { 
+  if (!token0) {
     return;
   }
   const token1 = Token.load(pair.token1);
@@ -54,12 +54,20 @@ function _storeUserSwap(account: string, timestamp: i32, value: BigDecimal, valu
 }
 
 export function handleTransfer(event: TransferEvent): void {
+  // ignore initial transfers for first adds
+  if (event.params.to.toHexString() == ZeroAddress && event.params.value.equals(BigInt.fromI32(1000))) {
+    return
+  }
   const from = event.params.from;
   const to = event.params.to;
   const value = event.params.value.toBigDecimal().div(DECIMAL18);
   const pair = Pair.load(event.address.toHexString());
   if (!pair) {
     return;
+  }
+  let valueUSD = BD_ZERO;
+  if (pair.totalSupply.gt(BD_ZERO)) {
+    valueUSD = value.times(pair.reserveUSD).div(pair.totalSupply);
   }
   // burn
   if (to.toHexString() == ZeroAddress && from.toHexString() == pair.id) {
@@ -71,7 +79,6 @@ export function handleTransfer(event: TransferEvent): void {
     pair.totalSupply = pair.totalSupply.plus(value)
     pair.save();
   }
-  const valueUSD = value.times(pair.reserveUSD).div(pair.totalSupply);
 
   // add
   if (to.toHexString() != ZeroAddress && to.toHexString() != pair.id) {
@@ -79,7 +86,7 @@ export function handleTransfer(event: TransferEvent): void {
   }
   // remove
   if (from.toHexString() != ZeroAddress && from.toHexString() != pair.id) {
-    _storeUserLiquidity(from.toHexString(), event.block.timestamp.toI32(),value.neg(), valueUSD.neg());
+    _storeUserLiquidity(from.toHexString(), event.block.timestamp.toI32(), value.neg(), valueUSD.neg());
   }
 
 }
@@ -95,7 +102,7 @@ function _storeUserLiquidity(account: string, timestamp: i32, value: BigDecimal,
   userLiquidity.lp = userLiquidity.lp.plus(value);
   userLiquidity.lpUSD = userLiquidity.lpUSD.plus(valueUSD);
   userLiquidity.save();
-  createUserLiquiditySnap(account, userLiquidity.latestUpdateTimestamp, userLiquidity.lp, userLiquidity.lpUSD,userLiquidity.basePoints);
+  createUserLiquiditySnap(account, userLiquidity.latestUpdateTimestamp, userLiquidity.lp, userLiquidity.lpUSD, userLiquidity.basePoints);
 
 }
 
