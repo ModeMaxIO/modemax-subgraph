@@ -1,12 +1,15 @@
-import { Address, Bytes, BigInt } from "@graphprotocol/graph-ts";
+import { Address, BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 import { MarketToken, UserLiquidity, UserLiquiditySnap } from "../generated/schema";
-import { BIGINT_ZERO } from "./const";
+import { BD_ZERO } from "./const";
 
-export function loadOrCreateMarketToken(address: Address): MarketToken {
+export function loadOrCreateMarketToken(address: Address, indexToken: string, longToken: string, shortToken: string): MarketToken {
   const id = address.toHexString();
   let marketToken = MarketToken.load(id);
   if (!marketToken) {
     marketToken = new MarketToken(id);
+    marketToken.indexToken = indexToken;
+    marketToken.longToken = longToken;
+    marketToken.shortToken = shortToken;
     marketToken.save();
   }
   return marketToken;
@@ -17,15 +20,17 @@ export function loadOrCreateUserLiquidity(account: string): UserLiquidity {
   let userLiquidity = UserLiquidity.load(id);
   if (!userLiquidity) {
     userLiquidity = new UserLiquidity(id);
-    userLiquidity.lp = BIGINT_ZERO;
-    userLiquidity.basePoints = BIGINT_ZERO;
+    userLiquidity.lps = [];
+    userLiquidity.markets = [];
+    userLiquidity.marketPrices = [];
+    userLiquidity.basePoints = BD_ZERO;
     userLiquidity.latestUpdateTimestamp = 0;
     userLiquidity.save();
   }
   return userLiquidity;
 }
 
-export function createUserLiquiditySnap(account: string, timestamp: i32, lp: BigInt, basePoints: BigInt): void {
+export function createUserLiquiditySnap(account: string, timestamp: i32, lps: BigInt[], markets: string[], marketPrices: BigDecimal[], basePoints: BigDecimal): void {
   let id = account.
     concat(timestamp.toString());
   let snap = UserLiquiditySnap.load(id);
@@ -40,7 +45,9 @@ export function createUserLiquiditySnap(account: string, timestamp: i32, lp: Big
   snap = new UserLiquiditySnap(id);
   snap.account = account;
   snap.timestamp = timestamp;
-  snap.lp = lp;
+  snap.lps = lps;
+  snap.markets = markets;
+  snap.marketPrices = marketPrices;
   snap.basePoints = basePoints;
   snap.save();
 }

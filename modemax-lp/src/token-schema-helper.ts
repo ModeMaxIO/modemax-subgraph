@@ -1,13 +1,13 @@
 import { BigInt } from "@graphprotocol/graph-ts";
 import { UserTokenStake, UserTokenStakeSnap } from "../generated/schema";
-import { BIGINT_ZERO } from "./const";
+import { BI_ZERO } from "./const";
 
 export function loadOrCreateUserTokenStake(account: string): UserTokenStake {
   let userTokenStake = UserTokenStake.load(account);
   if (!userTokenStake) {
     userTokenStake = new UserTokenStake(account);
-    userTokenStake.token = BIGINT_ZERO;
-    userTokenStake.basePoints = BIGINT_ZERO;
+    userTokenStake.token = BI_ZERO;
+    userTokenStake.basePoints = BI_ZERO;
     userTokenStake.latestUpdateTimestamp = 0;
     userTokenStake.save();
   }

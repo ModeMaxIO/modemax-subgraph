@@ -16,12 +16,12 @@
     "deploy-test1": "graph deploy --version-label v0.0.1 --node https://graphdeploy.modemax.io --ipfs https://ipfs.modemax.io modemax/lp1",
     "test": "graph test",
 
-    "remove-test": "goldsky subgraph delete modemax-test-lp/v0.0.2",
-    "deploy-test": "goldsky subgraph deploy modemax-test-lp/v0.0.2",
+    "remove-test": "goldsky subgraph delete modemax-test-lp/v0.0.1",
+    "deploy-test": "goldsky subgraph deploy modemax-test-lp/v0.0.1",
     "codegen-mainnet": "graph codegen subgraph-main.yaml",
     "build-mainnet": "graph build subgraph-main.yaml",
-    "remove-mainnet": "goldsky subgraph delete modemax-lp/v0.0.1",
-    "deploy-mainnet": "goldsky subgraph deploy modemax-lp/v0.0.1"
+    "remove-mainnet": "goldsky subgraph delete modemax-lp/v0.0.2",
+    "deploy-mainnet": "goldsky subgraph deploy modemax-lp/v0.0.2"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.78.0",

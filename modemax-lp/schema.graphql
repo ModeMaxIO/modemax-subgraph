@@ -1,6 +1,17 @@
 type MarketToken @entity(immutable: true) {
   # token address
   id: ID!
+  indexToken: String!
+  longToken: String!
+  shortToken: String!
+}
+
+type TokenPrice @entity {
+  # token address
+  id: ID!
+
+  minPrice: BigInt!
+  maxPrice: BigInt!
 }
 
 type ContractBundle @entity(immutable: true) {
@@ -12,8 +23,10 @@ type ContractBundle @entity(immutable: true) {
 type UserLiquidity @entity {
   # account
   id: ID!
-  lp: BigInt!
-  basePoints: BigInt!
+  lps: [BigInt!]!
+  markets: [String!]!
+  marketPrices: [BigDecimal!]!
+  basePoints: BigDecimal!
   latestUpdateTimestamp: Int!
   snap: [UserLiquiditySnap!] @derivedFrom(field: "account")
 }
@@ -23,8 +36,10 @@ type UserLiquiditySnap @entity(immutable: true) {
   id: ID!
   account: UserLiquidity!
   timestamp: Int!
-  lp: BigInt!
-  basePoints: BigInt!
+  lps: [BigInt!]!
+  markets: [String!]!
+  marketPrices: [BigDecimal!]!
+  basePoints: BigDecimal!
 }
 
 type UserTokenStake @entity {
@@ -82,5 +97,20 @@ type TraderToReferralCode @entity {
   id: ID!
   referralCode: ReferralCode!
   index: Int!
+  timestamp: Int!
+}
+
+type UserTradeSnap @entity(immutable: true) {
+  # account:hash:logIndex
+  id: ID!
+  account: String!
+  trade: BigDecimal!
+  timestamp: Int!
+}
+
+type MarketPrice @entity(immutable: true) {
+  # market:timestamp
+  id: ID!
+  price: BigInt!
   timestamp: Int!
 }
