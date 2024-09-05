@@ -13,92 +13,92 @@ import {
   timestampToPeriod, ETH,
 } from './helpers'
 
-import { AnswerUpdated as AnswerUpdatedEvent } from '../generated/ChainlinkAggregatorBTC/ChainlinkAggregator'
+// import { AnswerUpdated as AnswerUpdatedEvent } from '../generated/ChainlinkAggregatorBTC/ChainlinkAggregator'
 
 import { SetPrice } from '../generated/FastPriceFeed/FastPriceFeed'
 
 import { PriceUpdate } from '../generated/FastPriceEvents/FastPriceEvents'
 
-import { Swap as UniswapSwap } from '../generated/UniswapPool/UniswapPoolV3'
+// import { Swap as UniswapSwap } from '../generated/UniswapPool/UniswapPoolV3'
 
-function _storeChainlinkPrice(
-  token: string,
-  value: BigInt,
-  timestamp: BigInt,
-  blockNumber: BigInt
-): void {
-  let id = token + ':' + timestamp.toString()
-  let entity = new ChainlinkPrice(id)
-  entity.value = value
-  entity.period = 'any'
-  entity.token = token
-  entity.timestamp = timestamp.toI32()
-  entity.blockNumber = blockNumber.toI32()
-  entity.save()
+// function _storeChainlinkPrice(
+//   token: string,
+//   value: BigInt,
+//   timestamp: BigInt,
+//   blockNumber: BigInt
+// ): void {
+//   let id = token + ':' + timestamp.toString()
+//   let entity = new ChainlinkPrice(id)
+//   entity.value = value
+//   entity.period = 'any'
+//   entity.token = token
+//   entity.timestamp = timestamp.toI32()
+//   entity.blockNumber = blockNumber.toI32()
+//   entity.save()
 
-  let totalId = token
-  let totalEntity = new ChainlinkPrice(token)
-  totalEntity.value = value
-  totalEntity.period = 'last'
-  totalEntity.token = token
-  totalEntity.timestamp = timestamp.toI32()
-  totalEntity.blockNumber = blockNumber.toI32()
-  totalEntity.save()
-}
+//   let totalId = token
+//   let totalEntity = new ChainlinkPrice(token)
+//   totalEntity.value = value
+//   totalEntity.period = 'last'
+//   totalEntity.token = token
+//   totalEntity.timestamp = timestamp.toI32()
+//   totalEntity.blockNumber = blockNumber.toI32()
+//   totalEntity.save()
+// }
 
-export function handleAnswerUpdatedBTC(event: AnswerUpdatedEvent): void {
-  _storeChainlinkPrice(
-    BTC,
-    event.params.current,
-    event.block.timestamp,
-    event.block.number
-  )
-}
+// export function handleAnswerUpdatedBTC(event: AnswerUpdatedEvent): void {
+//   _storeChainlinkPrice(
+//     BTC,
+//     event.params.current,
+//     event.block.timestamp,
+//     event.block.number
+//   )
+// }
 
-export function handleAnswerUpdatedWETH(event: AnswerUpdatedEvent): void {
-  _storeChainlinkPrice(
-    WETH,
-    event.params.current,
-    event.block.timestamp,
-    event.block.number
-  )
-}
+// export function handleAnswerUpdatedWETH(event: AnswerUpdatedEvent): void {
+//   _storeChainlinkPrice(
+//     WETH,
+//     event.params.current,
+//     event.block.timestamp,
+//     event.block.number
+//   )
+// }
 
-export function handleAnswerUpdatedETH(event: AnswerUpdatedEvent): void {
-  _storeChainlinkPrice(
-      ETH,
-      event.params.current,
-      event.block.timestamp,
-      event.block.number
-  )
-}
+// export function handleAnswerUpdatedETH(event: AnswerUpdatedEvent): void {
+//   _storeChainlinkPrice(
+//       ETH,
+//       event.params.current,
+//       event.block.timestamp,
+//       event.block.number
+//   )
+// }
 
-export function handleAnswerUpdatedUSDT(event: AnswerUpdatedEvent): void {
-  _storeChainlinkPrice(
-    USDT,
-    event.params.current,
-    event.block.timestamp,
-    event.block.number
-  )
-}
+// export function handleAnswerUpdatedUSDT(event: AnswerUpdatedEvent): void {
+//   _storeChainlinkPrice(
+//     USDT,
+//     event.params.current,
+//     event.block.timestamp,
+//     event.block.number
+//   )
+// }
 
-export function handleAnswerUpdatedMODE(event: AnswerUpdatedEvent): void {
-  _storeChainlinkPrice(
-    SYS,
-    event.params.current,
-    event.block.timestamp,
-    event.block.number
-  )
-}
+// export function handleAnswerUpdatedMODE(event: AnswerUpdatedEvent): void {
+//   _storeChainlinkPrice(
+//     SYS,
+//     event.params.current,
+//     event.block.timestamp,
+//     event.block.number
+//   )
+// }
 
-export function handleAnswerUpdatedDAI(event: AnswerUpdatedEvent): void {
-  _storeChainlinkPrice(
-    DAI,
-    event.params.current,
-    event.block.timestamp,
-    event.block.number
-  )
-}
+// export function handleAnswerUpdatedDAI(event: AnswerUpdatedEvent): void {
+//   _storeChainlinkPrice(
+//     DAI,
+//     event.params.current,
+//     event.block.timestamp,
+//     event.block.number
+//   )
+// }
 
 function _storeUniswapPrice(
   id: string,
@@ -121,36 +121,36 @@ function _storeUniswapPrice(
   entity.save()
 }
 
-export function handleUniswapGmxEthSwap(event: UniswapSwap): void {
-  let ethPerGmx =
-    (-(
-      (event.params.amount0 * BigInt.fromI32(10).pow(18)) /
-      event.params.amount1
-    ) *
-      BigInt.fromI32(100)) /
-    BigInt.fromI32(99)
-  let gmxPrice = getTokenAmountUsd(WETH, ethPerGmx)
+// export function handleUniswapGmxEthSwap(event: UniswapSwap): void {
+//   let ethPerGmx =
+//     (-(
+//       (event.params.amount0 * BigInt.fromI32(10).pow(18)) /
+//       event.params.amount1
+//     ) *
+//       BigInt.fromI32(100)) /
+//     BigInt.fromI32(99)
+//   let gmxPrice = getTokenAmountUsd(WETH, ethPerGmx)
 
-  let totalId = GMX
-  _storeUniswapPrice(
-    totalId,
-    GMX,
-    gmxPrice,
-    'last',
-    event.block.timestamp,
-    event.block.number
-  )
+//   let totalId = GMX
+//   _storeUniswapPrice(
+//     totalId,
+//     GMX,
+//     gmxPrice,
+//     'last',
+//     event.block.timestamp,
+//     event.block.number
+//   )
 
-  let id = GMX + ':' + event.block.timestamp.toString()
-  _storeUniswapPrice(
-    id,
-    GMX,
-    gmxPrice,
-    'any',
-    event.block.timestamp,
-    event.block.number
-  )
-}
+//   let id = GMX + ':' + event.block.timestamp.toString()
+//   _storeUniswapPrice(
+//     id,
+//     GMX,
+//     gmxPrice,
+//     'any',
+//     event.block.timestamp,
+//     event.block.number
+//   )
+// }
 
 function _handleFastPriceUpdate(
   token: Address,

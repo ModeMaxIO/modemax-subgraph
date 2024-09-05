@@ -1,4 +1,4 @@
-import {BigInt, log, TypedMap} from '@graphprotocol/graph-ts'
+import {Address, BigInt, log, TypedMap} from '@graphprotocol/graph-ts'
 import { ChainlinkPrice, UniswapPrice } from '../generated/schema'
 
 export let BASIS_POINTS_DIVISOR = BigInt.fromI32(10000)
@@ -12,7 +12,9 @@ export let USDT_M = '0x1bfa66cb34851b98b5d23cadc554bbb4cba881f6'
 export let SYS = '0x4ffa6cdeb4def980b75e3f4764797a2cad1faef3'
 export let SYS_M = '0xc14092d39d4b9034b41b2d00581e8b4cb282611f'
 export let USDC = '0x22198b46c84cf43831e65d32a9403a194d617a61'
-export let ETH = '0xc7b06f55fbcd31cd691504f3dfc4efa9082616b7'
+export let ETH = '0xc7b06f55fbcd31cd691504f3dfc4efa9082616b7';
+export let BTC_M = Address.fromString('0x28C9e308AdFF7b1eF8a6013983a1399162CbA4E5')
+export let ETH_M = Address.fromString('0x6E0E4A4994e68Cc5D28802cba1dC7EE13b1e9659')
 // Deprecated
 export let DAI = '0x66a1b915b55bde2fa3402ed59bb5af19879c1178'
 // GMX = MOX
@@ -61,8 +63,8 @@ export function getTokenDecimals(token: String): u8 {
     decimals = 18
   } else if (token == ETH) {
     decimals = 18
-  }  else if (token == BTC) {
-    decimals = 18
+  }  else if (token == BTC || token == BTC_M.toHexString()) {
+    decimals = 8
   } else if (token == DAI) {
     decimals = 18
   } else if (token == SYS) {
@@ -76,6 +78,8 @@ export function getTokenDecimals(token: String): u8 {
   }  else if (token == USDC) {
     decimals = 6
   } else if (token == GMX) {
+    decimals = 18
+  } else if (token == ETH_M.toHexString()) {
     decimals = 18
   }
   if (decimals == 0) {

@@ -5,69 +5,69 @@ schema:
   file: ./schema.graphql
 
 dataSources:
-  - kind: ethereum/contract
-    name: ChainlinkAggregatorBTC
-    network: mainnet
-    source:
-      address: '0xB921aEe0abD048E2FDd1E15aB2ddFBE589884522'
-      abi: ChainlinkAggregator
-      startBlock: 15481873
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - ChainlinkPrice
-      abis:
-        - name: ChainlinkAggregator
-          file: ./abis/ChainlinkAggregator.json
-      eventHandlers:
-        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
-          handler: handleAnswerUpdatedBTC
-      file: ./src/pricesMapping.ts
-  - kind: ethereum/contract
-    name: ChainlinkAggregatorETH
-    network: mainnet
-    source:
-      address: '0x8f1ba66d30a1f01bd766eB3Bab0E8AfBeE164252'
-      abi: ChainlinkAggregator
-      startBlock: 15481868
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - ChainlinkPrice
-      abis:
-        - name: ChainlinkAggregator
-          file: ./abis/ChainlinkAggregator.json
-      eventHandlers:
-        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
-          handler: handleAnswerUpdatedETH
-      file: ./src/pricesMapping.ts
-  - kind: ethereum/contract
-    name: ChainlinkAggregatorSYS
-    network: mainnet
-    source:
-      address: '0x9Dff2CeBccA79F9090340604b58612fc3e818DCb'
-      abi: ChainlinkAggregator
-      startBlock: 15482071
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.4
-      language: wasm/assemblyscript
-      entities:
-        - ChainlinkPrice
-      abis:
-        - name: ChainlinkAggregator
-          file: ./abis/ChainlinkAggregator.json
-      eventHandlers:
-        - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
-          handler: handleAnswerUpdatedSYS
-      file: ./src/pricesMapping.ts
+  # - kind: ethereum/contract
+  #   name: ChainlinkAggregatorBTC
+  #   network: mode-mainnet
+  #   source:
+  #     address: '0xB921aEe0abD048E2FDd1E15aB2ddFBE589884522'
+  #     abi: ChainlinkAggregator
+  #     startBlock: 15481873
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ChainlinkPrice
+  #     abis:
+  #       - name: ChainlinkAggregator
+  #         file: ./abis/ChainlinkAggregator.json
+  #     eventHandlers:
+  #       - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+  #         handler: handleAnswerUpdatedBTC
+  #     file: ./src/pricesMapping.ts
+  # - kind: ethereum/contract
+  #   name: ChainlinkAggregatorETH
+  #   network: mode-mainnet
+  #   source:
+  #     address: '0x8f1ba66d30a1f01bd766eB3Bab0E8AfBeE164252'
+  #     abi: ChainlinkAggregator
+  #     startBlock: 15481868
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ChainlinkPrice
+  #     abis:
+  #       - name: ChainlinkAggregator
+  #         file: ./abis/ChainlinkAggregator.json
+  #     eventHandlers:
+  #       - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+  #         handler: handleAnswerUpdatedETH
+  #     file: ./src/pricesMapping.ts
+  # - kind: ethereum/contract
+  #   name: ChainlinkAggregatorSYS
+  #   network: mode-mainnet
+  #   source:
+  #     address: '0x9Dff2CeBccA79F9090340604b58612fc3e818DCb'
+  #     abi: ChainlinkAggregator
+  #     startBlock: 15482071
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.4
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ChainlinkPrice
+  #     abis:
+  #       - name: ChainlinkAggregator
+  #         file: ./abis/ChainlinkAggregator.json
+  #     eventHandlers:
+  #       - event: AnswerUpdated(indexed int256,indexed uint256,uint256)
+  #         handler: handleAnswerUpdatedSYS
+  #     file: ./src/pricesMapping.ts
   - kind: ethereum/contract
     name: GlpManager
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0x3993193bc1226e38d215d5572032fa5D626C01Cf'
       abi: GlpManager
@@ -90,7 +90,7 @@ dataSources:
 
   # - kind: ethereum/contract
   #   name: GlpManager2
-  #   network: mainnet
+  #   network: mode-mainnet
   #   source:
   #     address: '0x459aF0e66F49302DaE40Ba548FbBb16E3263C71F'
   #     abi: GlpManager
@@ -113,7 +113,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: OrderBook
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0xCa65d4b7565eED8060FEf70a7F3879f881DF2dA6'
       abi: OrderBook
@@ -158,7 +158,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: FastPriceFeed
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0x099B0a2DC79396271BE5201B111ED881E7334145'
       abi: FastPriceFeed
@@ -179,7 +179,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: FastPriceEvents
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0x89A8965D02c5021AbEE43C46b19Fc1Bb8beB9A86'
       abi: FastPriceEvents
@@ -200,7 +200,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: UniswapPool
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0x80A9ae39310abf666A87C743d6ebBD0E8C42158E'
       abi: UniswapPoolV3
@@ -221,7 +221,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: FeeGmxRewardDistributor # sbfGMXDistributor
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0xB357326f0b425f6f82f81b5942A9828F36f26002'
       abi: RewardDistributor
@@ -242,7 +242,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: EsgmxGmxRewardDistributor # sGMXDistributor
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0xfbE80514141Ff3034E4Fd1e773DC13B7749A3691'
       abi: RewardDistributor
@@ -263,7 +263,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: FeeGlpRewardDistributor # fsGLPDistributor
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0xd2270e7f1987ad4E5da07BC38bf9F3bB33901980'
       abi: RewardDistributor
@@ -284,7 +284,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: EsgmxGlpRewardDistributor # fsGLPDistributor
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0x1BdedDcD1959B6cFEE2525e07b49c27A91F1CA0C'
       abi: RewardDistributor
@@ -305,7 +305,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: Vault2
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0x53B1a1557264dD51cfA8c35c05BB6aaE5b45FD17'
       abi: Vault
@@ -332,7 +332,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: Vault
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0x53B1a1557264dD51cfA8c35c05BB6aaE5b45FD17'
       abi: Vault
@@ -392,7 +392,7 @@ dataSources:
 
   - kind: ethereum/contract
     name: PositionRouter
-    network: mainnet
+    network: mode-mainnet
     source:
       address: '0x1118Fa15aF11Eea68B500dD53dEf178e77f7fFa9'
       abi: PositionRouter
