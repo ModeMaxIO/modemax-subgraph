@@ -3,7 +3,7 @@ import { EventLog1EventDataStruct } from "../generated/EventEmitter/EventEmitter
 import { loadDataStore, loadSyntheticsReader } from "./schema-helper";
 import { BI_ZERO, MAX_PNL_FACTOR_FOR_TRADERS } from "./const";
 import { Reader__getMarketTokenPriceInputIndexTokenPriceStruct, Reader__getMarketTokenPriceInputLongTokenPriceStruct, Reader__getMarketTokenPriceInputMarketStruct, Reader__getMarketTokenPriceInputShortTokenPriceStruct, Reader as ReaderContract } from "../generated/EventEmitter/Reader";
-import { MarketPrice, MarketToken, TokenPrice } from "../generated/schema";
+import { MarketPrice, MarketPriceSnap, MarketToken, TokenPrice } from "../generated/schema";
 
 export function getAddressString(key: string, eventData: EventLog1EventDataStruct): string | null {
     let items = eventData.addressItems.items;
@@ -56,12 +56,19 @@ export function getIntItem(key: string, eventData: EventLog1EventDataStruct): Bi
 }
 
 
-
+// Get the current market token price if the timestamp is 0.
+// Get the market token price at the specified timestamp.
 export function getMarketTokenPrice(market: string, timestamp: i32): BigInt {
-    const marketPriceId = market.concat(':').concat(timestamp.toString());
-    let marketPrice = MarketPrice.load(marketPriceId)
-    if (marketPrice) {
-        return marketPrice.price;
+    const marketPriceSnapId = market.concat(':').concat(timestamp.toString());
+    let marketPriceSnap = MarketPriceSnap.load(marketPriceSnapId)
+    if (marketPriceSnap) {
+        return marketPriceSnap.price;
+    }
+    if (timestamp == 0) {
+        const marketPrice = loadOrCreateMarketTokenPrice(market);
+        if (marketPrice.price.gt(BI_ZERO)) {
+            return marketPrice.price;
+        }
     }
     const readerBundle = loadSyntheticsReader();
     if (!readerBundle) {
@@ -125,9 +132,25 @@ export function getMarketTokenPrice(market: string, timestamp: i32): BigInt {
     if (result.reverted) {
         return BI_ZERO;
     }
-    marketPrice = new MarketPrice(marketPriceId);
-    marketPrice.price = result.value.value0;
+    marketPriceSnap = new MarketPriceSnap(marketPriceSnapId);
+    marketPriceSnap.price = result.value.value0;
+    marketPriceSnap.timestamp = timestamp;
+    marketPriceSnap.save();
+    const marketPrice = loadOrCreateMarketTokenPrice(market);
+    marketPrice.price = marketPriceSnap.price;
     marketPrice.timestamp = timestamp;
     marketPrice.save();
     return result.value.value0;
+}
+
+function loadOrCreateMarketTokenPrice(market: string): MarketPrice {
+    let id = market;
+    let marketPrice = MarketPrice.load(id);
+    if (!marketPrice) {
+        marketPrice = new MarketPrice(id);
+        marketPrice.price = BI_ZERO;
+        marketPrice.timestamp = 0;
+        marketPrice.save();
+    }
+    return marketPrice;
 }

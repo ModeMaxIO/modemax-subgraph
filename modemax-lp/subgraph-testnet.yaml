@@ -4,11 +4,11 @@ schema:
 dataSources:
   - kind: ethereum
     name: EventEmitter
-    network: mode-mainnet
+    network: mode-testnet
     source:
-      address: "0xd63352120c45378682d705f42a9F085E79E3c888"
+      address: "0x33C11F7Fb85EB746BF99FCeF3fc0e4bC56d7e76c"
       abi: EventEmitter
-      startBlock: 10689910
+      startBlock: 14132647
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -18,19 +18,19 @@ dataSources:
       abis:
         - name: EventEmitter
           file: ./abis/EventEmitter.json
-        - name: Reader
-          file: ./abis/Reader.json
       eventHandlers:
         - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
           handler: handleEventLog1
+          # specVersion >= 1.12.0
+          # topic2: ['MarketCreated']
       file: ./src/event-emitter.ts
   - kind: ethereum
     name: ReferralStorage
-    network: mode-mainnet
+    network: mode-testnet
     source:
-      address: "0x301067B97FED258EeE42b502d8fF94a30f7d0365"
+      address: "0x06d3584F4c5E1F631f9aa3c8f6aF7C82a9dC153C"
       abi: ReferralStorage
-      startBlock: 10655820
+      startBlock: 14080250
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -52,11 +52,11 @@ dataSources:
       file: ./src/referral-storage.ts
   - kind: ethereum
     name: Vault
-    network: mode-mainnet
+    network: mode-testnet
     source:
-      address: "0x6824AbeA9D564e469B8FAaA0300b04cAFdD78341"
+      address: "0x03f15224338bDE82C88143E7b4251fFB40eFE575"
       abi: Vault
-      startBlock: 10811593
+      startBlock: 14078127
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -74,11 +74,11 @@ dataSources:
       file: ./src/vault.ts
   - kind: ethereum
     name: Token
-    network: mode-mainnet
+    network: mode-testnet
     source:
-      address: "0x773cCa619ba9AB46D67E51Fe91C8466A001D6613" # MOX
+      address: "0xaDB02879f2B446E26Da80139a91c93AF1feC017B"
       abi: ERC20
-      startBlock: 10809873
+      startBlock: 14077857
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -94,11 +94,11 @@ dataSources:
       file: ./src/token.ts
   - kind: ethereum
     name: EsToken
-    network: mode-mainnet
+    network: mode-testnet
     source:
-      address: "0xf7Ab8BC0565690adaDa7c85f2A6DdA6D56e212c4" # esMOX
+      address: "0xD88C1A3A3A36B05d718B738De52f03c4c8C77daa"
       abi: ERC20
-      startBlock: 10813425
+      startBlock: 14086925
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -114,11 +114,11 @@ dataSources:
       file: ./src/es-token.ts
   - kind: ethereum
     name: StakedToken
-    network: mode-mainnet
+    network: mode-testnet
     source:
-      address: "0xb06C8b68c7cf719b134cDD437B7A5129f564A5C2"
+      address: "0x82bf96141B5c70cd658f2F0566aa873606040AaA"
       abi: RewardTracker
-      startBlock: 10813838
+      startBlock: 14105392
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -133,52 +133,10 @@ dataSources:
           filter:
             kind: once
       file: ./src/staked-token.ts
-  - kind: ethereum
-    name: SyntheticsReader
-    network: mode-mainnet
-    source:
-      address: "0x1773953F5d9aD46aaEBD4870A3491c3fFc6d38f4"
-      abi: Reader
-      startBlock: 10690185
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - ContractBundle
-      abis:
-        - name: Reader
-          file: ./abis/Reader.json
-      blockHandlers:
-        - handler: handleOnce
-          filter:
-            kind: once
-      file: ./src/synthetics-reader.ts
-  - kind: ethereum
-    name: DataStore
-    network: mode-mainnet
-    source:
-      address: "0x3737Af56b945A0F25F0330E03B9327a977DBB400"
-      abi: Reader
-      startBlock: 10690185
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - ContractBundle
-      abis:
-        - name: Reader
-          file: ./abis/Reader.json
-      blockHandlers:
-        - handler: handleOnce
-          filter:
-            kind: once
-      file: ./src/data-store.ts
 templates:
   - kind: ethereum/contract
     name: MarketTokenTemplate
-    network: mode-mainnet
+    network: mode-testnet
     source:
       abi: MarketToken
     mapping:
@@ -192,8 +150,6 @@ templates:
       abis:
         - name: MarketToken
           file: ./abis/MarketToken.json
-        - name: Reader
-          file: ./abis/Reader.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleMarketTokenTransfer

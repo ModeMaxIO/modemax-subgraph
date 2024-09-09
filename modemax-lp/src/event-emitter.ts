@@ -1,15 +1,17 @@
 import {
   EventLog1 as EventLog1Event,
 } from "../generated/EventEmitter/EventEmitter"
-import { getAddressItem, getAddressString, getUintItem } from "./event-emitter-helper"
+import { getAddressItem, getAddressString, getIntItem, getUintItem } from "./event-emitter-helper"
 import { loadOrCreateMarketToken } from "./schema";
 import { MarketTokenTemplate } from "../generated/templates";
-import { createUserTradeSnap, loadOrCreateTokenPrice, loadOrCreateUserStat } from "./event-emitter-schema-helper";
+import { createUserTradeSnap, ignoreOrCreateLeaderboardSnapOfPrevDay, loadOrCreateLeaderboard, loadOrCreateTokenPrice, loadOrCreateUserCollateral, loadOrCreateUserStat, saveCollateralPrice } from "./event-emitter-schema-helper";
 import { DECIMAL30 } from "./const";
 import { storeReferralOfUserStat } from "./schema-helper";
+import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 
 
 export function handleEventLog1(event: EventLog1Event): void {
+  const timestamp = event.block.timestamp.toI32();
   if (event.params.eventName == "MarketCreated") {
     let marketTokenAddress = getAddressItem("marketToken", event.params.eventData);
     if (marketTokenAddress) {
@@ -41,14 +43,64 @@ export function handleEventLog1(event: EventLog1Event): void {
   }
   if (event.params.eventName == "PositionIncrease" || event.params.eventName == "PositionDecrease") {
     const account = getAddressString("account", event.params.eventData)!;
+    const collateralToken = getAddressString("collateralToken", event.params.eventData)!
     const sizeDeltaUsd = getUintItem("sizeDeltaUsd", event.params.eventData);
+    const netProfit = getUintItem("basePnlUsd", event.params.eventData);
+    const collateralTokenPriceMin = getUintItem("collateralTokenPrice.min", event.params.eventData);
+    const collateralTokenPriceMax = getUintItem("collateralTokenPrice.max", event.params.eventData);
+    const collateralAmount = getIntItem("collateralDeltaAmount", event.params.eventData);
+
     const userStat = loadOrCreateUserStat(account);
     const trade = sizeDeltaUsd.toBigDecimal().div(DECIMAL30);
     userStat.trade = userStat.trade.plus(trade);
     userStat.save();
     storeReferralOfUserStat(account, sizeDeltaUsd);
     createUserTradeSnap(account, event.transaction.hash.toHexString(), event.logIndex, event.block.timestamp, trade)
+    const collateralMidPrice = collateralTokenPriceMax.plus(collateralTokenPriceMin).toBigDecimal().div(BigDecimal.fromString('2'));
+    _storeUserCollateral(account, timestamp,
+      collateralToken,
+      event.params.eventName == 'PositionIncrease' ? collateralAmount : collateralAmount.neg(),
+    );
+    saveCollateralPrice(collateralToken, collateralMidPrice, timestamp);
+    {
+      ignoreOrCreateLeaderboardSnapOfPrevDay(account, timestamp);
+      const leaderboard = loadOrCreateLeaderboard(account);
+      const sizeDeltaUsd_BD = sizeDeltaUsd.toBigDecimal().div(DECIMAL30)
+      const netProfit_BD = netProfit.toBigDecimal().div(DECIMAL30);
+      if (event.params.eventName == "PositionIncrease") {
+        leaderboard.margin = leaderboard.margin.plus(sizeDeltaUsd_BD);
+      } else {
+        // PositionDecrease
+        leaderboard.margin = leaderboard.margin.minus(sizeDeltaUsd_BD);
+      }
+      leaderboard.tradingVolume = leaderboard.tradingVolume.plus(sizeDeltaUsd_BD);
+      leaderboard.netProfit = leaderboard.netProfit.plus(netProfit_BD);
+      leaderboard.save();
+    }
+
     return;
   }
 }
 
+function _storeUserCollateral(account: string, timestamp: i32, targetCollateralToken: string, value: BigInt): void {
+  const collateral = loadOrCreateUserCollateral(account);
+  const collateralAmount = value.toBigDecimal().div(DECIMAL30)
+  let foundTarget = false;
+  for (let i = 0; i < collateral.collateralTokens.length; i++) {
+    const token = collateral.collateralTokens[i];
+    if (token == targetCollateralToken) {
+      foundTarget = true
+      collateral.collaterals[i] = collateral.collaterals[i].plus(collateralAmount);
+    }
+  }
+  collateral.latestUpdateTimestamp = timestamp;
+  if (!foundTarget) {
+    const collaterals = collateral.collaterals;
+    collaterals.push(collateralAmount);
+    collateral.collaterals = collaterals;
+    const tokens = collateral.collateralTokens;
+    tokens.push(targetCollateralToken);
+    collateral.collateralTokens = tokens;
+  }
+  collateral.save();
+}

@@ -42,6 +42,13 @@ type UserLiquiditySnap @entity(immutable: true) {
   basePoints: BigDecimal!
 }
 
+type UserCollateral @entity {
+  id: ID!
+  collaterals: [BigDecimal!]!
+  collateralTokens: [String!]!
+  latestUpdateTimestamp: Int!
+}
+
 type UserTokenStake @entity {
   id: ID!
   token: BigInt!
@@ -108,9 +115,47 @@ type UserTradeSnap @entity(immutable: true) {
   timestamp: Int!
 }
 
-type MarketPrice @entity(immutable: true) {
+type MarketPrice @entity {
+  # market
+  id: ID!
+  price: BigInt!
+  timestamp: Int!
+}
+
+type MarketPriceSnap @entity(immutable: true) {
   # market:timestamp
   id: ID!
   price: BigInt!
   timestamp: Int!
+}
+
+type CollateralPrice @entity {
+  # collateral token address
+  id: ID!
+  price: BigDecimal!
+  timestamp: Int!
+}
+
+type Leaderboard @entity {
+  # account
+  id: ID!
+  account: String!
+  margin: BigDecimal!
+  netProfit: BigDecimal!
+  tradingVolume: BigDecimal!
+  latestUpdateTimestamp: Int!
+  liquidity: UserLiquidity!
+  collateral: UserCollateral!
+}
+
+type LeaderboardSnap @entity(immutable: true) {
+  # account:timestamp
+  id: ID!
+  account: String!
+  timestamp: Int!
+  margin: BigDecimal!
+  netProfit: BigDecimal!
+  tradingVolume: BigDecimal!
+  lpUsd: BigDecimal!
+  collateralUsd: BigDecimal!
 }
