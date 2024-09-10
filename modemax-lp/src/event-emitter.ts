@@ -45,7 +45,7 @@ export function handleEventLog1(event: EventLog1Event): void {
     const account = getAddressString("account", event.params.eventData)!;
     const collateralToken = getAddressString("collateralToken", event.params.eventData)!
     const sizeDeltaUsd = getUintItem("sizeDeltaUsd", event.params.eventData);
-    const netProfit = getUintItem("basePnlUsd", event.params.eventData);
+    const netProfit = getIntItem("basePnlUsd", event.params.eventData);
     const collateralTokenPriceMin = getUintItem("collateralTokenPrice.min", event.params.eventData);
     const collateralTokenPriceMax = getUintItem("collateralTokenPrice.max", event.params.eventData);
     const collateralAmount = getIntItem("collateralDeltaAmount", event.params.eventData);
@@ -84,23 +84,23 @@ export function handleEventLog1(event: EventLog1Event): void {
 
 function _storeUserCollateral(account: string, timestamp: i32, targetCollateralToken: string, value: BigInt): void {
   const collateral = loadOrCreateUserCollateral(account);
-  const collateralAmount = value.toBigDecimal().div(DECIMAL30)
+  const collateralAmount = value.toBigDecimal()
   let foundTarget = false;
+  const collaterals = collateral.collaterals;
   for (let i = 0; i < collateral.collateralTokens.length; i++) {
     const token = collateral.collateralTokens[i];
     if (token == targetCollateralToken) {
       foundTarget = true
-      collateral.collaterals[i] = collateral.collaterals[i].plus(collateralAmount);
+      collaterals[i] = collaterals[i].plus(collateralAmount);
     }
   }
   collateral.latestUpdateTimestamp = timestamp;
   if (!foundTarget) {
-    const collaterals = collateral.collaterals;
     collaterals.push(collateralAmount);
-    collateral.collaterals = collaterals;
     const tokens = collateral.collateralTokens;
     tokens.push(targetCollateralToken);
     collateral.collateralTokens = tokens;
   }
+  collateral.collaterals = collaterals;
   collateral.save();
 }

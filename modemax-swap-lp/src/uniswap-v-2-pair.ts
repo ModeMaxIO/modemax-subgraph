@@ -82,27 +82,71 @@ export function handleTransfer(event: TransferEvent): void {
 
   // add
   if (to.toHexString() != ZeroAddress && to.toHexString() != pair.id) {
-    _storeUserLiquidity(to.toHexString(), event.block.timestamp.toI32(), value, valueUSD);
+    _storeUserLiquidity(to.toHexString(), event.block.timestamp.toI32(), event.address.toHexString(), value);
   }
   // remove
   if (from.toHexString() != ZeroAddress && from.toHexString() != pair.id) {
-    _storeUserLiquidity(from.toHexString(), event.block.timestamp.toI32(), value.neg(), valueUSD.neg());
+    _storeUserLiquidity(from.toHexString(), event.block.timestamp.toI32(), event.address.toHexString(), value.neg());
   }
 
 }
 
-function _storeUserLiquidity(account: string, timestamp: i32, value: BigDecimal, valueUSD: BigDecimal): void {
+function _storeUserLiquidity(account: string, timestamp: i32, targetPair: string, value: BigDecimal): void {
   const userLiquidity = loadOrCreateUserLiquidity(account);
+  let foundTarget = false;
   if (userLiquidity.latestUpdateTimestamp > 0) {
-    const gainedPointBase = userLiquidity.lpUSD.times(BigDecimal.fromString((timestamp - userLiquidity.latestUpdateTimestamp).toString()));
+    const pointsIndex = BigDecimal.fromString((timestamp - userLiquidity.latestUpdateTimestamp).toString());
+    let gainedPointBase = BD_ZERO;
+    const lps = userLiquidity.lps;
+    const derivedUSDs = userLiquidity.derivedUSDs;
+    for (let i = 0; i < userLiquidity.pairs.length; i++) {
+      const pairAddr = userLiquidity.pairs[i];
+      const prevDerivedUSDs = derivedUSDs[i];
+      const lp = lps[i];
+      const pair = Pair.load(pairAddr);
+      let midDerivedUSD = BD_ZERO;
+      if (pair) {
+        let nowDerivedUSD = BD_ZERO;
+        if (pair.totalSupply.ge(BD_ZERO)) {
+          nowDerivedUSD = pair.reserveUSD.div(pair.totalSupply);
+        }
+        midDerivedUSD = prevDerivedUSDs.plus(nowDerivedUSD).div(BigDecimal.fromString('2'));
+        derivedUSDs[i] = nowDerivedUSD
+      } else {
+        midDerivedUSD = prevDerivedUSDs;
+      }
+      if (pairAddr == targetPair) {
+        lps[i] = lps[i].plus(value);
+        foundTarget = true;
+      }
+      gainedPointBase = gainedPointBase.plus(lp.times(midDerivedUSD).times(pointsIndex));
+    }
+    userLiquidity.lps = lps;
+    userLiquidity.derivedUSDs = derivedUSDs;
     userLiquidity.basePoints = userLiquidity.basePoints.plus(gainedPointBase);
   }
   // update
   userLiquidity.latestUpdateTimestamp = timestamp;
-  userLiquidity.lp = userLiquidity.lp.plus(value);
-  userLiquidity.lpUSD = userLiquidity.lpUSD.plus(valueUSD);
+  if (!foundTarget) {
+    let nowDerivedUSD = BD_ZERO;
+    const pair = Pair.load(targetPair);
+    if (pair) {
+      if (pair.totalSupply.ge(BD_ZERO)) {
+        nowDerivedUSD = pair.reserveUSD.div(pair.totalSupply);
+      }
+    }
+    const lps = userLiquidity.lps;
+    lps.push(value);
+    userLiquidity.lps = lps;
+    const pairs = userLiquidity.pairs;
+    pairs.push(targetPair);
+    userLiquidity.pairs = pairs;
+    const derivedUSDs = userLiquidity.derivedUSDs;
+    derivedUSDs.push(nowDerivedUSD);
+    userLiquidity.derivedUSDs = derivedUSDs;
+  }
   userLiquidity.save();
-  createUserLiquiditySnap(account, userLiquidity.latestUpdateTimestamp, userLiquidity.lp, userLiquidity.lpUSD, userLiquidity.basePoints);
+  createUserLiquiditySnap(account, userLiquidity.latestUpdateTimestamp, userLiquidity.lps, userLiquidity.pairs, userLiquidity.derivedUSDs, userLiquidity.basePoints);
 
 }
 

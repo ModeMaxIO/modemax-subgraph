@@ -7,8 +7,9 @@ export function loadOrCreateUserLiquidity(account: string): UserLiquidity {
   let userLiquidity = UserLiquidity.load(id);
   if (!userLiquidity) {
     userLiquidity = new UserLiquidity(id);
-    userLiquidity.lp = BD_ZERO;
-    userLiquidity.lpUSD = BD_ZERO;
+    userLiquidity.lps = [];
+    userLiquidity.pairs = [];
+    userLiquidity.derivedUSDs = [];
     userLiquidity.basePoints = BD_ZERO;
     userLiquidity.latestUpdateTimestamp = 0;
     userLiquidity.save();
@@ -16,7 +17,7 @@ export function loadOrCreateUserLiquidity(account: string): UserLiquidity {
   return userLiquidity;
 }
 
-export function createUserLiquiditySnap(account: string, timestamp: i32, lp: BigDecimal, lpUSD: BigDecimal, basePoints: BigDecimal): void {
+export function createUserLiquiditySnap(account: string, timestamp: i32, lps: BigDecimal[], pairs: string[], derivedUSDs: BigDecimal[], basePoints: BigDecimal): void {
   let id = account.
     concat(timestamp.toString());
   let snap = UserLiquiditySnap.load(id);
@@ -31,8 +32,9 @@ export function createUserLiquiditySnap(account: string, timestamp: i32, lp: Big
   snap = new UserLiquiditySnap(id);
   snap.account = account;
   snap.timestamp = timestamp;
-  snap.lp = lp;
-  snap.lpUSD = lpUSD;
+  snap.lps = lps;
+  snap.derivedUSDs = derivedUSDs;
+  snap.pairs = pairs;
   snap.basePoints = basePoints;
   snap.save();
 }

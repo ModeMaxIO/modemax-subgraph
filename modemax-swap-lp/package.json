@@ -4,13 +4,12 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.studio.thegraph.com/deploy/ tinkler/modemax-swap-lp",
-    "create-local": "graph create --node http://localhost:8020/ tinkler/modemax-swap-lp",
-    "remove-local": "graph remove --node http://localhost:8020/ tinkler/modemax-swap-lp",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 tinkler/modemax-swap-lp",
+    "create-local": "graph create --node http://localhost:8020/ luoskak/modemax-swap-lp",
+    "remove-local": "graph remove --node http://localhost:8020/ luoskak/modemax-swap-lp",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 luoskak/modemax-swap-lp",
     "test": "graph test",
-    "remove-mainnet": "goldsky subgraph delete modemax-swap-lp/v0.0.1",
-    "deploy-mainnet": "goldsky subgraph deploy modemax-swap-lp/v0.0.1"
+    "remove-mainnet": "goldsky subgraph delete modemax-swap-lp/v0.0.2",
+    "deploy-mainnet": "goldsky subgraph deploy modemax-swap-lp/v0.0.2"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.78.0",

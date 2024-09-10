@@ -31,8 +31,9 @@ type Pair @entity {
 type UserLiquidity @entity {
   # account
   id: ID!
-  lp: BigDecimal!
-  lpUSD: BigDecimal!
+  lps: [BigDecimal!]!
+  pairs: [String!]!
+  derivedUSDs: [BigDecimal!]!
   # lpUSD * timestamp + <prev>
   basePoints: BigDecimal!
   latestUpdateTimestamp: Int!
@@ -44,8 +45,9 @@ type UserLiquiditySnap @entity(immutable: true) {
   id: ID!
   account: UserLiquidity!
   timestamp: Int!
-  lp: BigDecimal!
-  lpUSD: BigDecimal!
+  lps: [BigDecimal!]!
+  pairs: [String!]!
+  derivedUSDs: [BigDecimal!]!
   basePoints: BigDecimal!
 }
 
