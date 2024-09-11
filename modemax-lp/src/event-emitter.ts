@@ -4,9 +4,9 @@ import {
 import { getAddressItem, getAddressString, getIntItem, getUintItem } from "./event-emitter-helper"
 import { loadOrCreateMarketToken } from "./schema";
 import { MarketTokenTemplate } from "../generated/templates";
-import { createUserTradeSnap, ignoreOrCreateLeaderboardSnapOfPrevDay, loadOrCreateLeaderboard, loadOrCreateTokenPrice, loadOrCreateUserCollateral, loadOrCreateUserStat, saveCollateralPrice } from "./event-emitter-schema-helper";
+import { createUserTradeSnap, loadOrCreateTokenPrice, loadOrCreateUserStat, saveCollateralPrice } from "./event-emitter-schema-helper";
 import { DECIMAL30 } from "./const";
-import { storeReferralOfUserStat } from "./schema-helper";
+import { ignoreOrCreateLeaderboardSnapOfPrevDay, loadOrCreateLeaderboard, storeReferralOfUserStat, storeUserCollateral } from "./schema-helper";
 import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 
 
@@ -57,7 +57,7 @@ export function handleEventLog1(event: EventLog1Event): void {
     storeReferralOfUserStat(account, sizeDeltaUsd);
     createUserTradeSnap(account, event.transaction.hash.toHexString(), event.logIndex, event.block.timestamp, trade)
     const collateralMidPrice = collateralTokenPriceMax.plus(collateralTokenPriceMin).toBigDecimal().div(BigDecimal.fromString('2'));
-    _storeUserCollateral(account, timestamp,
+    storeUserCollateral(account, timestamp,
       collateralToken,
       event.params.eventName == 'PositionIncrease' ? collateralAmount : collateralAmount.neg(),
     );
@@ -75,6 +75,7 @@ export function handleEventLog1(event: EventLog1Event): void {
       }
       leaderboard.tradingVolume = leaderboard.tradingVolume.plus(sizeDeltaUsd_BD);
       leaderboard.netProfit = leaderboard.netProfit.plus(netProfit_BD);
+      leaderboard.latestUpdateTimestamp = timestamp;
       leaderboard.save();
     }
 
@@ -82,25 +83,3 @@ export function handleEventLog1(event: EventLog1Event): void {
   }
 }
 
-function _storeUserCollateral(account: string, timestamp: i32, targetCollateralToken: string, value: BigInt): void {
-  const collateral = loadOrCreateUserCollateral(account);
-  const collateralAmount = value.toBigDecimal()
-  let foundTarget = false;
-  const collaterals = collateral.collaterals;
-  for (let i = 0; i < collateral.collateralTokens.length; i++) {
-    const token = collateral.collateralTokens[i];
-    if (token == targetCollateralToken) {
-      foundTarget = true
-      collaterals[i] = collaterals[i].plus(collateralAmount);
-    }
-  }
-  collateral.latestUpdateTimestamp = timestamp;
-  if (!foundTarget) {
-    collaterals.push(collateralAmount);
-    const tokens = collateral.collateralTokens;
-    tokens.push(targetCollateralToken);
-    collateral.collateralTokens = tokens;
-  }
-  collateral.collaterals = collaterals;
-  collateral.save();
-}

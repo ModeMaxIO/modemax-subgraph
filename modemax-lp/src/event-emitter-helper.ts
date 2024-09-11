@@ -1,6 +1,6 @@
 import { Address, BigInt, ethereum } from "@graphprotocol/graph-ts";
 import { EventLog1EventDataStruct } from "../generated/EventEmitter/EventEmitter";
-import { loadDataStore, loadSyntheticsReader } from "./schema-helper";
+import { loadDataStore, loadOrCreateMarketTokenPrice, loadSyntheticsReader } from "./schema-helper";
 import { BI_ZERO, MAX_PNL_FACTOR_FOR_TRADERS } from "./const";
 import { Reader__getMarketTokenPriceInputIndexTokenPriceStruct, Reader__getMarketTokenPriceInputLongTokenPriceStruct, Reader__getMarketTokenPriceInputMarketStruct, Reader__getMarketTokenPriceInputShortTokenPriceStruct, Reader as ReaderContract } from "../generated/EventEmitter/Reader";
 import { MarketPrice, MarketPriceSnap, MarketToken, TokenPrice } from "../generated/schema";
@@ -143,14 +143,3 @@ export function getMarketTokenPrice(market: string, timestamp: i32): BigInt {
     return result.value.value0;
 }
 
-function loadOrCreateMarketTokenPrice(market: string): MarketPrice {
-    let id = market;
-    let marketPrice = MarketPrice.load(id);
-    if (!marketPrice) {
-        marketPrice = new MarketPrice(id);
-        marketPrice.price = BI_ZERO;
-        marketPrice.timestamp = 0;
-        marketPrice.save();
-    }
-    return marketPrice;
-}

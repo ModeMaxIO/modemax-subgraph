@@ -1,5 +1,5 @@
 import { Address, BigDecimal, BigInt } from "@graphprotocol/graph-ts";
-import { MarketToken, UserLiquidity, UserLiquiditySnap } from "../generated/schema";
+import { Leaderboard, MarketToken, UserLiquidity, UserLiquiditySnap } from "../generated/schema";
 import { BD_ZERO } from "./const";
 
 export function loadOrCreateMarketToken(address: Address, indexToken: string, longToken: string, shortToken: string): MarketToken {
@@ -26,6 +26,12 @@ export function loadOrCreateUserLiquidity(account: string): UserLiquidity {
     userLiquidity.basePoints = BD_ZERO;
     userLiquidity.latestUpdateTimestamp = 0;
     userLiquidity.save();
+
+    // refer to leaderboard
+    const leaderboard = Leaderboard.load(account);
+    if (leaderboard) {
+      leaderboard.liquidity = id;
+    }
   }
   return userLiquidity;
 }

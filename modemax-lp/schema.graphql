@@ -144,18 +144,28 @@ type Leaderboard @entity {
   netProfit: BigDecimal!
   tradingVolume: BigDecimal!
   latestUpdateTimestamp: Int!
-  liquidity: UserLiquidity!
+  swap: BigDecimal!
+  liquidity: UserLiquidity
   collateral: UserCollateral!
+  snap: [LeaderboardSnap!]! @derivedFrom(field: "account")
 }
 
 type LeaderboardSnap @entity(immutable: true) {
   # account:timestamp
   id: ID!
-  account: String!
+  account: Leaderboard!
   timestamp: Int!
   margin: BigDecimal!
   netProfit: BigDecimal!
   tradingVolume: BigDecimal!
+  swap: BigDecimal!
   lpUsd: BigDecimal!
   collateralUsd: BigDecimal!
+}
+
+type Position @entity(immutable: true) {
+  # positionId
+  id: ID!
+  account: String!
+  timestamp: Int!
 }
