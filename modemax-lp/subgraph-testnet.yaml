@@ -2,54 +2,98 @@ specVersion: 0.0.8
 schema:
   file: ./schema.graphql
 dataSources:
-  - kind: ethereum
-    name: EventEmitter
-    network: mode-testnet
-    source:
-      address: "0x33C11F7Fb85EB746BF99FCeF3fc0e4bC56d7e76c"
-      abi: EventEmitter
-      startBlock: 14132647
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - MarketToken
-      abis:
-        - name: EventEmitter
-          file: ./abis/EventEmitter.json
-      eventHandlers:
-        - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
-          handler: handleEventLog1
-          # specVersion >= 1.12.0
-          # topic2: ['MarketCreated']
-      file: ./src/event-emitter.ts
-  - kind: ethereum
-    name: ReferralStorage
-    network: mode-testnet
-    source:
-      address: "0x06d3584F4c5E1F631f9aa3c8f6aF7C82a9dC153C"
-      abi: ReferralStorage
-      startBlock: 14080250
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - RegisterCode
-      abis:
-        - name: ReferralStorage
-          file: ./abis/ReferralStorage.json
-      eventHandlers:
-        - event: RegisterCode(address,bytes32)
-          handler: handleRegisterCode
-        - event: SetCodeOwner(address,address,bytes32)
-          handler: handleSetCodeOwner
-        - event: GovSetCodeOwner(bytes32,address)
-          handler: handleGovSetCodeOwner
-        - event: SetTraderReferralCode(address,bytes32)
-          handler: handleSetTraderReferralCode
-      file: ./src/referral-storage.ts
+# # v2
+#   - kind: ethereum
+#     name: EventEmitter
+#     network: mode-testnet
+#     source:
+#       address: "0xd63352120c45378682d705f42a9F085E79E3c888"
+#       abi: EventEmitter
+#       startBlock: 10689910
+#     mapping:
+#       kind: ethereum/events
+#       apiVersion: 0.0.7
+#       language: wasm/assemblyscript
+#       entities:
+#         - MarketToken
+#       abis:
+#         - name: EventEmitter
+#           file: ./abis/EventEmitter.json
+#         - name: Reader
+#           file: ./abis/Reader.json
+#       eventHandlers:
+#         - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
+#           handler: handleEventLog1
+#       file: ./src/event-emitter.ts
+#   - kind: ethereum
+#     name: ReferralStorage
+#     network: mode-testnet
+#     source:
+#       address: "0x301067B97FED258EeE42b502d8fF94a30f7d0365"
+#       abi: ReferralStorage
+#       startBlock: 10655820
+#     mapping:
+#       kind: ethereum/events
+#       apiVersion: 0.0.7
+#       language: wasm/assemblyscript
+#       entities:
+#         - RegisterCode
+#       abis:
+#         - name: ReferralStorage
+#           file: ./abis/ReferralStorage.json
+#       eventHandlers:
+#         - event: RegisterCode(address,bytes32)
+#           handler: handleRegisterCode
+#         - event: SetCodeOwner(address,address,bytes32)
+#           handler: handleSetCodeOwner
+#         - event: GovSetCodeOwner(bytes32,address)
+#           handler: handleGovSetCodeOwner
+#         - event: SetTraderReferralCode(address,bytes32)
+#           handler: handleSetTraderReferralCode
+#       file: ./src/referral-storage.ts
+#   - kind: ethereum
+#     name: SyntheticsReader
+#     network: mode-testnet
+#     source:
+#       address: "0x1773953F5d9aD46aaEBD4870A3491c3fFc6d38f4"
+#       abi: Reader
+#       startBlock: 10690185
+#     mapping:
+#       kind: ethereum/events
+#       apiVersion: 0.0.7
+#       language: wasm/assemblyscript
+#       entities:
+#         - ContractBundle
+#       abis:
+#         - name: Reader
+#           file: ./abis/Reader.json
+#       blockHandlers:
+#         - handler: handleOnce
+#           filter:
+#             kind: once
+#       file: ./src/synthetics-reader.ts
+#   - kind: ethereum
+#     name: DataStore
+#     network: mode-testnet
+#     source:
+#       address: "0x3737Af56b945A0F25F0330E03B9327a977DBB400"
+#       abi: Reader
+#       startBlock: 10690185
+#     mapping:
+#       kind: ethereum/events
+#       apiVersion: 0.0.7
+#       language: wasm/assemblyscript
+#       entities:
+#         - ContractBundle
+#       abis:
+#         - name: Reader
+#           file: ./abis/Reader.json
+#       blockHandlers:
+#         - handler: handleOnce
+#           filter:
+#             kind: once
+#       file: ./src/data-store.ts
+# v1
   - kind: ethereum
     name: Vault
     network: mode-testnet
@@ -71,54 +115,26 @@ dataSources:
           handler: handleIncreasePosition
         - event: DecreasePosition(bytes32,address,address,address,uint256,uint256,bool,uint256,uint256)
           handler: handleDecreasePosition
+        - event: ClosePosition(bytes32,uint256,uint256,uint256,uint256,uint256,int256)
+          handler: handleClosePosition
+        - event: UpdatePosition(bytes32,uint256,uint256,uint256,uint256,uint256,int256)
+          handler: handleUpdatePosition
+        - event: LiquidatePosition(bytes32,address,address,address,bool,uint256,uint256,uint256,int256,uint256)
+          handler: handleLiquidatePosition
+        - event: Swap(address,address,address,uint256,uint256,uint256,uint256)
+          handler: handleSwap
+      blockHandlers:
+        - handler: handleOnce
+          filter:
+            kind: once
       file: ./src/vault.ts
   - kind: ethereum
-    name: Token
+    name: GlpManager
     network: mode-testnet
     source:
-      address: "0xaDB02879f2B446E26Da80139a91c93AF1feC017B"
-      abi: ERC20
-      startBlock: 14077857
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - UserTokenStake
-      abis:
-        - name: ERC20
-          file: ./abis/ERC20.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-      file: ./src/token.ts
-  - kind: ethereum
-    name: EsToken
-    network: mode-testnet
-    source:
-      address: "0xD88C1A3A3A36B05d718B738De52f03c4c8C77daa"
-      abi: ERC20
-      startBlock: 14086925
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - UserEsTokenStake
-      abis:
-        - name: ERC20
-          file: ./abis/ERC20.json
-      eventHandlers:
-        - event: Transfer(indexed address,indexed address,uint256)
-          handler: handleTransfer
-      file: ./src/es-token.ts
-  - kind: ethereum
-    name: StakedToken
-    network: mode-testnet
-    source:
-      address: "0x82bf96141B5c70cd658f2F0566aa873606040AaA"
-      abi: RewardTracker
-      startBlock: 14105392
+      address: '0x3E0dd58c412982dE0B4e55A569f8Eb298147d3Cc'
+      abi: GlpManager
+      startBlock: 14078169
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -126,13 +142,79 @@ dataSources:
       entities:
         - ContractBundle
       abis:
-        - name: RewardTracker
-          file: ./abis/RewardTracker.json
-      blockHandlers:
-        - handler: handleOnce
-          filter:
-            kind: once
-      file: ./src/staked-token.ts
+        - name: GlpManager
+          file: ./abis/GlpManager.json
+        - name: Vault
+          file: ./abis/Vault.json
+      eventHandlers:
+        - event: AddLiquidity(address,address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleAddLiquidity
+        - event: RemoveLiquidity(address,address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleRemoveLiquidity
+      file: ./src/glp-manager.ts
+# common
+  # - kind: ethereum
+  #   name: Token
+  #   network: mode-testnet
+  #   source:
+  #     address: "0x773cCa619ba9AB46D67E51Fe91C8466A001D6613" # MOX
+  #     abi: ERC20
+  #     startBlock: 10809873
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.7
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - UserTokenStake
+  #     abis:
+  #       - name: ERC20
+  #         file: ./abis/ERC20.json
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,uint256)
+  #         handler: handleTransfer
+  #     file: ./src/token.ts
+  # - kind: ethereum
+  #   name: EsToken
+  #   network: mode-testnet
+  #   source:
+  #     address: "0xf7Ab8BC0565690adaDa7c85f2A6DdA6D56e212c4" # esMOX
+  #     abi: ERC20
+  #     startBlock: 10813425
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.7
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - UserEsTokenStake
+  #     abis:
+  #       - name: ERC20
+  #         file: ./abis/ERC20.json
+  #     eventHandlers:
+  #       - event: Transfer(indexed address,indexed address,uint256)
+  #         handler: handleTransfer
+  #     file: ./src/es-token.ts
+  # - kind: ethereum
+  #   name: StakedToken
+  #   network: mode-testnet
+  #   source:
+  #     address: "0xb06C8b68c7cf719b134cDD437B7A5129f564A5C2"
+  #     abi: RewardTracker
+  #     startBlock: 10813838
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.7
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ContractBundle
+  #     abis:
+  #       - name: RewardTracker
+  #         file: ./abis/RewardTracker.json
+  #     blockHandlers:
+  #       - handler: handleOnce
+  #         filter:
+  #           kind: once
+  #     file: ./src/staked-token.ts
+
 templates:
   - kind: ethereum/contract
     name: MarketTokenTemplate
@@ -150,6 +232,8 @@ templates:
       abis:
         - name: MarketToken
           file: ./abis/MarketToken.json
+        - name: Reader
+          file: ./abis/Reader.json
       eventHandlers:
         - event: Transfer(indexed address,indexed address,uint256)
           handler: handleMarketTokenTransfer
