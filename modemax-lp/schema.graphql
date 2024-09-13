@@ -6,6 +6,15 @@ type MarketToken @entity(immutable: true) {
   shortToken: String!
 }
 
+type Token @entity {
+  # token address
+  id: ID!
+
+  name: String!
+  symbol: String!
+  decimals: Int!
+}
+
 type TokenPrice @entity {
   # token address
   id: ID!

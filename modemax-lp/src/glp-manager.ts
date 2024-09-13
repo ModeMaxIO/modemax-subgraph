@@ -7,6 +7,7 @@ import {
 import { BD_ZERO, DECIMAL30 } from "./const";
 import { createUserLiquiditySnap, loadOrCreateUserLiquidity } from "./schema";
 import { getMarketTokenPriceV1 } from "./v1-healper";
+import { exponentToBigDecimal } from "./helpers";
 
 export function handleAddLiquidity(event: AddLiquidityEvent): void {
   _storeUserLiquidity(event.params.account.toHexString(), event.block.timestamp.toI32(), event.params.token.toHexString(), event.params.mintAmount)
@@ -43,7 +44,7 @@ function _storeUserLiquidity(account: string, timestamp: i32, targetMarket: stri
         lps[i] = lps[i].plus(value);
         foundTarget = true;
       }
-      gainedPointBase = gainedPointBase.plus(lp.toBigDecimal().times(midPrice).times(pointsIndex));
+      gainedPointBase = gainedPointBase.plus(lp.toBigDecimal().times(midPrice).div(exponentToBigDecimal(18)).times(pointsIndex));
     }
     userLiquidity.basePoints = userLiquidity.basePoints.plus(gainedPointBase);
   }

@@ -2,6 +2,7 @@ import { BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
 export const ZeroAddress = "0x0000000000000000000000000000000000000000";
 export const BI_ZERO = BigInt.fromI32(0);
 export const BD_ZERO = BigDecimal.fromString('0');
+export const BI_ONE = BigInt.fromI32(1);
 export const DECIMAL30 = BigDecimal.fromString("1000000000000000000000000000000");
 export const DECIMAL18 = BigDecimal.fromString("1000000000000000000");
 export const C_STAKED_TOKEN = 'stakedToken';
