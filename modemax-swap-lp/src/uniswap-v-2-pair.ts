@@ -5,8 +5,8 @@ import {
   Transfer as TransferEvent,
   Sync as SyncEvent
 } from "../generated/templates/UniswapV2Pair/UniswapV2Pair";
-import { BD_ZERO, DECIMAL18, ZeroAddress } from "./helpers/const";
-import { createUserLiquiditySnap, createUserSwapSnap, loadOrCreateUserLiquidity, loadOrCreateUserSwap } from "./helpers/schema-helper";
+import { BD_ZERO, DECIMAL18, feeTeams, ZeroAddress } from "./helpers/const";
+import { createUserLiquiditySnap, createUserSwapSnap, ignoreOrCreatePairFeeSnapOfPrevHour, ignoreOrCreatePairSwapSnapOfPrevHour, loadOrCreatePairFee, loadOrCreatePairSwap, loadOrCreateUserLiquidity, loadOrCreateUserSwap } from "./helpers/schema-helper";
 import { convertTokenToDecimal } from "./helpers/utils";
 import { findUSDPerToken, saveTokenPrice } from "./helpers/pricing";
 
@@ -23,6 +23,7 @@ export function handleSwap(event: SwapEvent): void {
   if (!token1) {
     return;
   }
+  const timestamp = event.block.timestamp.toI32();
   const amount0In = convertTokenToDecimal(event.params.amount0In, token0.decimals);
   const amount1In = convertTokenToDecimal(event.params.amount1In, token1.decimals);
   // const amount0Out = convertTokenToDecimal(event.params.amount0Out, token0.decimals);
@@ -40,6 +41,15 @@ export function handleSwap(event: SwapEvent): void {
   }
   const value = amount0In.plus(amount1In);
   const valueUSD = amount0In.times(token0USD).plus(amount1In.times(token1USD))
+  {
+    ignoreOrCreatePairSwapSnapOfPrevHour(pair, timestamp);
+    const pairSwap = loadOrCreatePairSwap(pair);
+    pairSwap.swapUsd = pairSwap.swapUsd.plus(valueUSD);
+    pairSwap.latestUpdateTimestamp = timestamp;
+    pairSwap.save();
+    pair.save();
+  }
+  
   _storeUserSwap(event.params.to.toHexString(), event.block.timestamp.toI32(), value, valueUSD)
 }
 
@@ -78,6 +88,20 @@ export function handleTransfer(event: TransferEvent): void {
   if (from.toHexString() == ZeroAddress) {
     pair.totalSupply = pair.totalSupply.plus(value)
     pair.save();
+    // fee
+    for(let i = 0; i < feeTeams.length; i++) {
+      const ft = feeTeams[i];
+      if (ft.toHexString() == to.toHexString()) {
+        const timestamp = event.block.timestamp.toI32();
+        ignoreOrCreatePairFeeSnapOfPrevHour(pair, timestamp);
+        const fee = loadOrCreatePairFee(pair);
+        fee.feeUsd = fee.feeUsd.plus(valueUSD);
+        fee.latestUpdateTimestamp = timestamp;
+        fee.save();
+        pair.save();
+      }
+    }
+    
   }
 
   // add
@@ -107,7 +131,7 @@ function _storeUserLiquidity(account: string, timestamp: i32, targetPair: string
       let midDerivedUSD = BD_ZERO;
       if (pair) {
         let nowDerivedUSD = BD_ZERO;
-        if (pair.totalSupply.ge(BD_ZERO)) {
+        if (pair.totalSupply.gt(BD_ZERO)) {
           nowDerivedUSD = pair.reserveUSD.div(pair.totalSupply);
         }
         midDerivedUSD = prevDerivedUSDs.plus(nowDerivedUSD).div(BigDecimal.fromString('2'));
@@ -131,7 +155,7 @@ function _storeUserLiquidity(account: string, timestamp: i32, targetPair: string
     let nowDerivedUSD = BD_ZERO;
     const pair = Pair.load(targetPair);
     if (pair) {
-      if (pair.totalSupply.ge(BD_ZERO)) {
+      if (pair.totalSupply.gt(BD_ZERO)) {
         nowDerivedUSD = pair.reserveUSD.div(pair.totalSupply);
       }
     }

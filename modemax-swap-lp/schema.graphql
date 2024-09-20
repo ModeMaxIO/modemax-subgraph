@@ -15,6 +15,7 @@ type Token @entity {
   symbol: String!
   decimals: Int!
   derivedUSD: BigDecimal!
+  price: TokenPrice
 }
 
 type Pair @entity {
@@ -26,6 +27,8 @@ type Pair @entity {
   totalSupply: BigDecimal!
 
   reserveUSD: BigDecimal!
+  fee: PairFee
+  swap: PairSwap
 }
 
 type UserLiquidity @entity {
@@ -72,4 +75,35 @@ type UserSwapSnap @entity(immutable: true) {
 type TokenPrice @entity {
   id: ID!
   priceUSD: BigDecimal!
+}
+
+type PairFee @entity {
+  # pair address
+  id: ID!
+  feeUsd: BigDecimal!
+  latestUpdateTimestamp: Int!
+  snap: [PairFeeSnap!] @derivedFrom(field: "pair")
+}
+
+type PairFeeSnap @entity(immutable: true) {
+  id: ID!
+  pair: PairFee!
+  feeUsd: BigDecimal!
+  # hourStartUnix
+  timestamp: Int!
+}
+
+type PairSwap @entity {
+  id: ID!
+  swapUsd: BigDecimal!
+  latestUpdateTimestamp: Int!
+  snap: [PairSwapSnap!] @derivedFrom(field: "pair")
+}
+
+type PairSwapSnap @entity(immutable: true) {
+  id: ID!
+  pair: PairSwap!
+  swapUsd: BigDecimal!
+  # hourStartUnix
+  timestamp: Int!
 }

@@ -12,6 +12,8 @@ export function saveTokenPrice(token: Token, pairId: string): void {
       tokenPrice.priceUSD = BD_ZERO;
     }
     tokenPrice.save();
+    token.price = token.id;
+    token.save();
   }
   if (token.id == USD_ANCHOR.toHexString()) {
      // always one

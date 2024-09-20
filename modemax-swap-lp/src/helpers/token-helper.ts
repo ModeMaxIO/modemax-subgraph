@@ -13,7 +13,7 @@ export function fetchTokenName(tokenAddr: Address): string  {
 export function fetchTokenSymbol(tokenAddr: Address): string  {
   let contract = IERC20.bind(tokenAddr)
   let symbolValue = 'unkown'
-  let symbolResult = contract.try_name()
+  let symbolResult = contract.try_symbol()
   if (!symbolResult.reverted) {
     symbolValue = symbolResult.value
   }
