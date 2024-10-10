@@ -20,8 +20,10 @@
 
     "codegen-mainnet": "graph codegen subgraph-mainnet.yaml",
     "build-mainnet": "graph build subgraph-mainnet.yaml",
-    "remove-mainnet": "goldsky subgraph delete modemax-market-stats/v0.0.2",
-    "deploy-mainnet": "goldsky subgraph deploy modemax-market-stats/v0.0.2"
+    "remove-mainnet": "goldsky subgraph delete modemax-market-stats/v0.0.3",
+    "deploy-mainnet": "goldsky subgraph deploy modemax-market-stats/v0.0.3",
+    "remove-mainnet2": "goldsky subgraph delete modemax-market-stats/v0.0.2",
+    "deploy-mainnet2": "goldsky subgraph deploy modemax-market-stats/v0.0.2"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.68.5",
