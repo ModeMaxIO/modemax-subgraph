@@ -44,6 +44,15 @@ type ActivePosition @entity {
   entryFundingRate: BigInt!
   collateral: BigInt!
   size: BigInt!
+
+  # from raw
+  collateralToken: String!
+  account: String!
+  indexToken: String!
+  isLong: Boolean!
+  isActive: Boolean!
+
+  timestamp: Int!
 }
 
 enum LiquidationType {
@@ -325,6 +334,9 @@ type FeeStat @entity {
 type Transaction @entity {
   id: ID!
 
+  transactionIndex: Int!
+  blockNumber: Int!
+  timestamp: Int!
   from: String!
   to: String!
 }
@@ -384,6 +396,214 @@ type CreateDecreasePosition @entity {
   sizeDelta: BigInt!
   acceptablePrice: BigInt!
   executionFee: BigInt!
+
+  transaction: Transaction!
+  timestamp: Int!
+}
+
+type Token @entity {
+  # token address
+  id: ID!
+
+  name: String!
+  symbol: String!
+  decimals: Int!
+  vaultDecimals: Int!
+}
+
+type TokenPrice @entity {
+  # token address
+  id: ID!
+
+  minPrice: BigInt!
+  maxPrice: BigInt!
+}
+
+# From raw
+type ClosePosition @entity {
+  id: ID!
+
+  key: String!
+  size: BigInt!
+  collateral: BigInt!
+  averagePrice: BigInt!
+  entryFundingRate: BigInt!
+  reserveAmount: BigInt!
+  realisedPnl: BigInt!
+
+  transaction: Transaction!
+  logIndex: Int!
+  timestamp: Int!
+}
+
+type CollectMarginFee @entity {
+  id: ID!
+  token: Bytes!
+  feeUsd: BigInt!
+  feeTokens: BigInt!
+
+  transaction: Transaction!
+  timestamp: Int!
+}
+
+type DecreasePosition @entity {
+  id: ID!
+
+  key: String!
+  account: String!
+  collateralToken: String!
+  indexToken: String!
+
+  collateralDelta: BigInt!
+  sizeDelta: BigInt!
+
+  isLong: Boolean!
+
+  price: BigInt!
+  fee: BigInt!
+
+  transaction: Transaction!
+  logIndex: Int!
+  timestamp: Int!
+}
+
+type IncreasePosition @entity {
+  id: ID!
+
+  key: String!
+  account: String!
+  collateralToken: String!
+  indexToken: String!
+
+  collateralDelta: BigInt!
+  sizeDelta: BigInt!
+
+  isLong: Boolean!
+
+  price: BigInt!
+  fee: BigInt!
+
+  transaction: Transaction!
+  logIndex: Int!
+  timestamp: Int!
+}
+
+type LiquidatePosition @entity {
+  id: ID!
+
+  key: String!
+  account: String!
+  collateralToken: String!
+  indexToken: String!
+
+  isLong: Boolean!
+
+  size: BigInt!
+  collateral: BigInt!
+  reserveAmount: BigInt!
+  realisedPnl: BigInt!
+  markPrice: BigInt!
+
+  transaction: Transaction!
+  logIndex: Int!
+  timestamp: Int!
+}
+
+type UpdatePosition @entity {
+  id: ID!
+
+  key: String!
+  size: BigInt!
+  collateral: BigInt!
+  averagePrice: BigInt!
+  entryFundingRate: BigInt!
+  reserveAmount: BigInt!
+  realisedPnl: BigInt!
+
+  transaction: Transaction!
+  logIndex: Int!
+  timestamp: Int!
+}
+
+type CollectSwapFee @entity {
+  id: ID!
+  token: Bytes!
+  feeUsd: BigInt!
+  feeTokens: BigInt!
+
+  transaction: Transaction!
+  timestamp: Int!
+}
+
+type AddLiquidity @entity {
+  id: ID!
+
+  account: String!
+  token: String!
+
+  amount: BigInt!
+  aumInUsdg: BigInt!
+  glpSupply: BigInt!
+  usdgAmount: BigInt!
+  mintAmount: BigInt!
+
+  transaction: Transaction!
+  timestamp: Int!
+}
+
+type RemoveLiquidity @entity {
+  id: ID!
+
+  account: String!
+  token: String!
+
+  glpAmount: BigInt!
+  aumInUsdg: BigInt!
+  glpSupply: BigInt!
+  usdgAmount: BigInt!
+  amountOut: BigInt!
+
+  transaction: Transaction!
+  timestamp: Int!
+}
+
+type StakeWmx @entity {
+  id: ID!
+
+  account: String!
+  token: String!
+  amount: BigInt!
+
+  transaction: Transaction!
+  timestamp: Int!
+}
+
+type UnstakeWmx @entity {
+  id: ID!
+
+  account: String!
+  token: String!
+  amount: BigInt!
+
+  transaction: Transaction!
+  timestamp: Int!
+}
+
+type StakeWlp @entity {
+  id: ID!
+
+  account: String!
+  amount: BigInt!
+
+  transaction: Transaction!
+  timestamp: Int!
+}
+
+type UnstakeWlp @entity {
+  id: ID!
+
+  account: String!
+  amount: BigInt!
 
   transaction: Transaction!
   timestamp: Int!

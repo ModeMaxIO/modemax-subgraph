@@ -1,6 +1,24 @@
-import { BigInt, ethereum } from '@graphprotocol/graph-ts'
-import { Action } from '../generated/schema'
+import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 
+export const BI_ZERO = BigInt.fromI32(0);
+export const BD_ZERO = BigDecimal.fromString('0');
+export const BI_ONE = BigInt.fromI32(1);
+export const DECIMAL30 = BigDecimal.fromString("1000000000000000000000000000000");
+export const DECIMAL18 = BigDecimal.fromString("1000000000000000000");
+
+export const FUNDING_PRECISION = BigInt.fromI32(1000000)
+export const BASIS_POINTS_DIVISOR = BigInt.fromI32(10000)
+export const LIQUIDATOR_ADDRESS = '0x44311c91008dde73de521cd25136fd37d616802c';
+
+export const TRADE_TYPES = new Array<string>(5)
+TRADE_TYPES[0] = 'margin'
+TRADE_TYPES[1] = 'swap'
+TRADE_TYPES[2] = 'mint'
+TRADE_TYPES[3] = 'burn'
+TRADE_TYPES[4] = 'liquidation'
+TRADE_TYPES[5] = 'marginAndLiquidation'
+
+// actionsMapping
 export const ActionSellUSDG = 'SellUSDG'
 export const ActionSwap = 'Swap'
 export const ActionCreateIncreasePosition = 'CreateIncreasePosition'
@@ -25,37 +43,3 @@ export const ActionExecuteSwapOrder = 'ExecuteSwapOrder'
 export const ActionCreateSwapOrder = 'CreateSwapOrder'
 export const ActionUpdateSwapOrder = 'UpdateSwapOrder'
 export const ActionCancelSwapOrder = 'CancelSwapOrder'
-
-function _generateIdFromEvent(event: ethereum.Event): string {
-  return event.transaction.hash.toHexString() + ':' + event.logIndex.toString()
-}
-
-export function _createActionIfNotExist(
-  event: ethereum.Event,
-  action: string,
-  account: string,
-  params: string
-): string {
-  let id = _generateIdFromEvent(event)
-  let entity = Action.load(id)
-
-  if (entity == null) {
-    entity = new Action(id)
-    entity.timestamp = event.block.timestamp.toI32()
-    entity.blockNumber = event.block.number.toI32()
-    entity.txhash = event.transaction.hash.toHexString()
-    entity.transactionIndex = event.transaction.index.toI32()
-    entity.from = account
-    if (event.transaction.to == null) {
-      entity.to = ''
-    } else {
-      entity.to = event.transaction.to.toHexString()
-    }
-
-    entity.action = action
-    entity.params = params
-    entity.save()
-  }
-
-  return id
-}

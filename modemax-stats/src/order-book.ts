@@ -1,136 +1,31 @@
+import { BigInt } from "@graphprotocol/graph-ts";
 import {
-  BigInt,
-  Address,
-  // TypedMap,
-  // ethereum,
-  // store,
-  // log
-} from '@graphprotocol/graph-ts'
-import {
-  CreateIncreaseOrder,
-  CreateDecreaseOrder,
-  CreateSwapOrder,
-  CancelIncreaseOrder,
-  CancelDecreaseOrder,
-  CancelSwapOrder,
-  ExecuteIncreaseOrder,
-  ExecuteDecreaseOrder,
-  ExecuteSwapOrder,
-  UpdateIncreaseOrder,
-  UpdateDecreaseOrder,
-  UpdateSwapOrder,
-} from '../generated/OrderBook/OrderBook'
+  CreateIncreaseOrder as CreateIncreaseOrderEvent,
+  CancelIncreaseOrder as CancelIncreaseOrderEvent,
+  ExecuteIncreaseOrder as ExecuteIncreaseOrderEvent,
+  UpdateIncreaseOrder as UpdateIncreaseOrderEvent,
+  CreateDecreaseOrder as CreateDecreaseOrderEvent,
+  CancelDecreaseOrder as CancelDecreaseOrderEvent,
+  ExecuteDecreaseOrder as ExecuteDecreaseOrderEvent,
+  UpdateDecreaseOrder as UpdateDecreaseOrderEvent,
+  CreateSwapOrder as CreateSwapOrderEvent,
+  CancelSwapOrder as CancelSwapOrderEvent,
+  ExecuteSwapOrder as ExecuteSwapOrderEvent,
+  UpdateSwapOrder as UpdateSwapOrderEvent,
+} from "../generated/OrderBook/OrderBook";
+import { ActionCancelDecreaseOrder, ActionCancelIncreaseOrder, ActionCancelSwapOrder, ActionCreateDecreaseOrder, ActionCreateIncreaseOrder, ActionCreateSwapOrder, ActionExecuteIncreaseOrder, ActionExecuteSwapOrder, ActionUpdateDecreaseOrder, ActionUpdateIncreaseOrder, ActionUpdateSwapOrder, BI_ZERO } from "./const";
+import { cancelOrder, createOrder, executeOrder, storeStats } from "./order-book-schema-helpers";
+import { Action } from "../generated/schema";
 
-import { Order, OrderStat } from '../generated/schema'
-
-import { getTokenAmountUsd } from './helpers'
-
-import {
-  _createActionIfNotExist,
-  ActionExecuteIncreaseOrder,
-  ActionCreateIncreaseOrder,
-  ActionCancelIncreaseOrder,
-  ActionUpdateIncreaseOrder,
-  ActionCreateDecreaseOrder,
-  ActionCancelDecreaseOrder,
-  ActionUpdateDecreaseOrder,
-  ActionExecuteSwapOrder,
-  ActionCreateSwapOrder,
-  ActionUpdateSwapOrder,
-  ActionCancelSwapOrder,
-} from './actionsMapping'
-
-function _getId(account: Address, type: string, index: BigInt): string {
-  let id = account.toHexString() + '-' + type + '-' + index.toString()
-  return id
-}
-
-function _storeStats(
-  incrementProp: string,
-  decrementProp: string | null
-): void {
-  let entity = OrderStat.load('total')
-  if (entity == null) {
-    entity = new OrderStat('total')
-    entity.openSwap = 0 as i32
-    entity.openIncrease = 0 as i32
-    entity.openDecrease = 0 as i32
-    entity.cancelledSwap = 0 as i32
-    entity.cancelledIncrease = 0 as i32
-    entity.cancelledDecrease = 0 as i32
-    entity.executedSwap = 0 as i32
-    entity.executedIncrease = 0 as i32
-    entity.executedDecrease = 0 as i32
-    entity.period = 'total'
-  }
-
-  entity.setI32(incrementProp, entity.getI32(incrementProp) + 1)
-  if (decrementProp != null) {
-    entity.setI32(decrementProp, entity.getI32(decrementProp) - 1)
-  }
-
-  entity.save()
-}
-
-function _handleCreateOrder(
-  account: Address,
-  type: string,
-  index: BigInt,
-  size: BigInt,
-  timestamp: BigInt
-): void {
-  let id = _getId(account, type, index)
-  let order = new Order(id)
-
-  order.account = account.toHexString()
-  order.createdTimestamp = timestamp.toI32()
-  order.index = index
-  order.type = type
-  order.status = 'open'
-  order.size = size
-
-  order.save()
-}
-
-function _handleCancelOrder(
-  account: Address,
-  type: string,
-  index: BigInt,
-  timestamp: BigInt
-): void {
-  let id = account.toHexString() + '-' + type + '-' + index.toString()
-  let order = Order.load(id)
-
-  order.status = 'cancelled'
-  order.cancelledTimestamp = timestamp.toI32()
-
-  order.save()
-}
-
-function _handleExecuteOrder(
-  account: Address,
-  type: string,
-  index: BigInt,
-  timestamp: BigInt
-): void {
-  let id = account.toHexString() + '-' + type + '-' + index.toString()
-  let order = Order.load(id)
-
-  order.status = 'executed'
-  order.executedTimestamp = timestamp.toI32()
-
-  order.save()
-}
-
-export function handleCreateIncreaseOrder(event: CreateIncreaseOrder): void {
-  _handleCreateOrder(
+export function handleCreateIncreaseOrder(event: CreateIncreaseOrderEvent): void {
+  createOrder(
     event.params.account,
     'increase',
     event.params.orderIndex,
     event.params.sizeDelta,
     event.block.timestamp
   )
-  _storeStats('openIncrease', null)
+  storeStats('openIncrease', null)
 
   let action: string, params: string
   action = ActionCreateIncreaseOrder
@@ -181,22 +76,33 @@ export function handleCreateIncreaseOrder(event: CreateIncreaseOrder): void {
     '","type": "Increase","updatedAt": ' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleCancelIncreaseOrder(event: CancelIncreaseOrder): void {
-  _handleCancelOrder(
+export function handleCancelIncreaseOrder(event: CancelIncreaseOrderEvent): void {
+  cancelOrder(
     event.params.account,
     'increase',
     event.params.orderIndex,
     event.block.timestamp
   )
-  _storeStats('cancelledIncrease', 'openIncrease')
+  storeStats('cancelledIncrease', 'openIncrease')
 
   let action: string, params: string
   action = ActionCancelIncreaseOrder
@@ -245,22 +151,33 @@ export function handleCancelIncreaseOrder(event: CancelIncreaseOrder): void {
     '","type": "Increase","updatedAt": ' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleExecuteIncreaseOrder(event: ExecuteIncreaseOrder): void {
-  _handleExecuteOrder(
+export function handleExecuteIncreaseOrder(event: ExecuteIncreaseOrderEvent): void {
+  executeOrder(
     event.params.account,
     'increase',
     event.params.orderIndex,
     event.block.timestamp
   )
-  _storeStats('executedIncrease', 'openIncrease')
+  storeStats('executedIncrease', 'openIncrease')
 
   let action: string, params: string
   action = ActionExecuteIncreaseOrder
@@ -314,15 +231,26 @@ export function handleExecuteIncreaseOrder(event: ExecuteIncreaseOrder): void {
     '","type": "Increase","updatedAt": ' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleUpdateIncreaseOrder(event: UpdateIncreaseOrder): void {
+export function handleUpdateIncreaseOrder(event: UpdateIncreaseOrderEvent): void {
   let action: string, params: string
   action = ActionUpdateIncreaseOrder
   //   params = JSON.stringify({
@@ -360,23 +288,34 @@ export function handleUpdateIncreaseOrder(event: UpdateIncreaseOrder): void {
     '","type": "Increase","updatedAt": ' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleCreateDecreaseOrder(event: CreateDecreaseOrder): void {
-  _handleCreateOrder(
+export function handleCreateDecreaseOrder(event: CreateDecreaseOrderEvent): void {
+  createOrder(
     event.params.account,
     'decrease',
     event.params.orderIndex,
     event.params.sizeDelta,
     event.block.timestamp
   )
-  _storeStats('openDecrease', null)
+  storeStats('openDecrease', null)
 
   let action: string, params: string
   action = ActionCreateDecreaseOrder
@@ -423,22 +362,33 @@ export function handleCreateDecreaseOrder(event: CreateDecreaseOrder): void {
     '","type": "Decrease","updatedAt": ' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleCancelDecreaseOrder(event: CancelDecreaseOrder): void {
-  _handleCancelOrder(
+export function handleCancelDecreaseOrder(event: CancelDecreaseOrderEvent): void {
+  cancelOrder(
     event.params.account,
     'decrease',
     event.params.orderIndex,
     event.block.timestamp
   )
-  _storeStats('cancelledDecrease', 'openDecrease')
+  storeStats('cancelledDecrease', 'openDecrease')
 
   let action: string, params: string
   action = ActionCancelDecreaseOrder
@@ -482,22 +432,33 @@ export function handleCancelDecreaseOrder(event: CancelDecreaseOrder): void {
     '","type": "Decrease","updatedAt": ' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleExecuteDecreaseOrder(event: ExecuteDecreaseOrder): void {
-  _handleExecuteOrder(
+export function handleExecuteDecreaseOrder(event: ExecuteDecreaseOrderEvent): void {
+  executeOrder(
     event.params.account,
     'decrease',
     event.params.orderIndex,
     event.block.timestamp
   )
-  _storeStats('executedDecrease', 'openDecrease')
+  storeStats('executedDecrease', 'openDecrease')
 
   let action: string, params: string
   action = ActionExecuteIncreaseOrder
@@ -544,15 +505,26 @@ export function handleExecuteDecreaseOrder(event: ExecuteDecreaseOrder): void {
     '","type": "Decrease","updatedAt": ' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleUpdateDecreaseOrder(event: UpdateDecreaseOrder): void {
+export function handleUpdateDecreaseOrder(event: UpdateDecreaseOrderEvent): void {
   let action: string, params: string
   action = ActionUpdateDecreaseOrder
   //   params = JSON.stringify({
@@ -604,25 +576,38 @@ export function handleUpdateDecreaseOrder(event: UpdateDecreaseOrder): void {
     '","type": "Decrease","updatedAt": ' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleCreateSwapOrder(event: CreateSwapOrder): void {
+export function handleCreateSwapOrder(event: CreateSwapOrderEvent): void {
   let path = event.params.path
-  let size = getTokenAmountUsd(path[0].toHexString(), event.params.amountIn)
-  _handleCreateOrder(
+  // TODO
+  // let size = getTokenAmountUsd(path[0].toHexString(), event.params.amountIn)
+  let size = BI_ZERO;
+  createOrder(
     event.params.account,
     'swap',
     event.params.orderIndex,
     size,
     event.block.timestamp
   )
-  _storeStats('openSwap', null)
+  storeStats('openSwap', null)
 
   let action: string, params: string
   action = ActionCreateSwapOrder
@@ -670,22 +655,33 @@ export function handleCreateSwapOrder(event: CreateSwapOrder): void {
     ',"updatedAt": "' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '"}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleCancelSwapOrder(event: CancelSwapOrder): void {
-  _handleCancelOrder(
+export function handleCancelSwapOrder(event: CancelSwapOrderEvent): void {
+  cancelOrder(
     event.params.account,
     'swap',
     event.params.orderIndex,
     event.block.timestamp
   )
-  _storeStats('cancelledSwap', 'openSwap')
+  storeStats('cancelledSwap', 'openSwap')
 
   let action: string, params: string
   action = ActionCancelSwapOrder
@@ -734,22 +730,34 @@ export function handleCancelSwapOrder(event: CancelSwapOrder): void {
     ',"updatedAt": "' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '"}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
+
 }
 
-export function handleExecuteSwapOrder(event: ExecuteSwapOrder): void {
-  _handleExecuteOrder(
+export function handleExecuteSwapOrder(event: ExecuteSwapOrderEvent): void {
+  executeOrder(
     event.params.account,
     'swap',
     event.params.orderIndex,
     event.block.timestamp
   )
-  _storeStats('executedSwap', 'openSwap')
+  storeStats('executedSwap', 'openSwap')
 
   let action: string, params: string
   action = ActionExecuteSwapOrder
@@ -797,15 +805,26 @@ export function handleExecuteSwapOrder(event: ExecuteSwapOrder): void {
     ',"updatedAt": "' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '"}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
 
-export function handleUpdateSwapOrder(event: UpdateSwapOrder): void {
+export function handleUpdateSwapOrder(event: UpdateSwapOrderEvent): void {
   let action: string, params: string
   action = ActionUpdateSwapOrder
 
@@ -852,10 +871,21 @@ export function handleUpdateSwapOrder(event: UpdateSwapOrder): void {
     ',"updatedAt": "' +
     event.block.timestamp.times(BigInt.fromI32(1000)).toString() +
     '"}}'
-  _createActionIfNotExist(
-    event,
-    action,
-    event.params.account.toHexString(),
-    params
-  )
+  // _createActionIfNotExist
+  {
+    let id = event.transaction.hash.toHexString() + ':' + event.logIndex.toString();
+    let entity = Action.load(id)
+    if (!entity) {
+      entity = new Action(id)
+      entity.timestamp = event.block.timestamp.toI32()
+      entity.blockNumber = event.block.number.toI32()
+      entity.txhash = event.transaction.hash.toHexString()
+      entity.transactionIndex = event.transaction.index.toI32()
+      entity.from = event.params.account.toHexString()
+      entity.to = ''
+      entity.action = action
+      entity.params = params
+      entity.save()
+    }
+  }
 }
