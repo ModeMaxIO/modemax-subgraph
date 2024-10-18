@@ -25,32 +25,7 @@ dataSources:
 #         - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
 #           handler: handleEventLog1
 #       file: ./src/event-emitter.ts
-#   - kind: ethereum
-#     name: ReferralStorage
-#     network: mode-testnet
-#     source:
-#       address: "0x301067B97FED258EeE42b502d8fF94a30f7d0365"
-#       abi: ReferralStorage
-#       startBlock: 10655820
-#     mapping:
-#       kind: ethereum/events
-#       apiVersion: 0.0.7
-#       language: wasm/assemblyscript
-#       entities:
-#         - RegisterCode
-#       abis:
-#         - name: ReferralStorage
-#           file: ./abis/ReferralStorage.json
-#       eventHandlers:
-#         - event: RegisterCode(address,bytes32)
-#           handler: handleRegisterCode
-#         - event: SetCodeOwner(address,address,bytes32)
-#           handler: handleSetCodeOwner
-#         - event: GovSetCodeOwner(bytes32,address)
-#           handler: handleGovSetCodeOwner
-#         - event: SetTraderReferralCode(address,bytes32)
-#           handler: handleSetTraderReferralCode
-#       file: ./src/referral-storage.ts
+
 #   - kind: ethereum
 #     name: SyntheticsReader
 #     network: mode-testnet
@@ -157,6 +132,32 @@ dataSources:
           handler: handleRemoveLiquidity
       file: ./src/glp-manager.ts
 # common
+  - kind: ethereum
+    name: ReferralStorage
+    network: mode-testnet
+    source:
+      address: "0x06d3584F4c5E1F631f9aa3c8f6aF7C82a9dC153C"
+      abi: ReferralStorage
+      startBlock: 14080250
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - RegisterCode
+      abis:
+        - name: ReferralStorage
+          file: ./abis/ReferralStorage.json
+      eventHandlers:
+        - event: RegisterCode(address,bytes32)
+          handler: handleRegisterCode
+        - event: SetCodeOwner(address,address,bytes32)
+          handler: handleSetCodeOwner
+        - event: GovSetCodeOwner(bytes32,address)
+          handler: handleGovSetCodeOwner
+        - event: SetTraderReferralCode(address,bytes32)
+          handler: handleSetTraderReferralCode
+      file: ./src/referral-storage.ts
   # - kind: ethereum
   #   name: Token
   #   network: mode-testnet
@@ -181,9 +182,9 @@ dataSources:
   #   name: EsToken
   #   network: mode-testnet
   #   source:
-  #     address: "0xf7Ab8BC0565690adaDa7c85f2A6DdA6D56e212c4" # esMOX
+  #     address: "0x9A9eB45c107e4Fc35e9b272070F59542B6e26153" # esMOX
   #     abi: ERC20
-  #     startBlock: 10813425
+  #     startBlock: 1469622
   #   mapping:
   #     kind: ethereum/events
   #     apiVersion: 0.0.7
@@ -201,9 +202,9 @@ dataSources:
   #   name: StakedToken
   #   network: mode-testnet
   #   source:
-  #     address: "0xb06C8b68c7cf719b134cDD437B7A5129f564A5C2"
+  #     address: "0xaeD7B46833a1285449BB9011ec82f48B5380212A"
   #     abi: RewardTracker
-  #     startBlock: 10813838
+  #     startBlock: 1558519
   #   mapping:
   #     kind: ethereum/events
   #     apiVersion: 0.0.7

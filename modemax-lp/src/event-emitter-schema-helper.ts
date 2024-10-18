@@ -38,12 +38,3 @@ export function loadOrCreateTokenPrice(tokenAddress: string): TokenPrice {
   return tokenPrice;
 }
 
-export function saveCollateralPrice(token: string, price: BigDecimal, timestamp: i32): void {
-  let collateralPrice = CollateralPrice.load(token);
-  if (!collateralPrice) {
-    collateralPrice = new CollateralPrice(token);
-  }
-  collateralPrice.price = price;
-  collateralPrice.timestamp = timestamp;
-  collateralPrice.save();
-}

@@ -2,11 +2,10 @@ import {
   EventLog1 as EventLog1Event,
 } from "../generated/EventEmitter/EventEmitter"
 import { getAddressItem, getAddressString, getIntItem, getUintItem } from "./event-emitter-helper"
-import { loadOrCreateMarketToken } from "./schema";
 import { MarketTokenTemplate } from "../generated/templates";
-import { createUserTradeSnap, loadOrCreateTokenPrice, loadOrCreateUserStat, saveCollateralPrice } from "./event-emitter-schema-helper";
+import { createUserTradeSnap, loadOrCreateTokenPrice, loadOrCreateUserStat } from "./event-emitter-schema-helper";
 import { DECIMAL30 } from "./const";
-import { ignoreOrCreateLeaderboardSnapOfPrevDay, loadOrCreateLeaderboard, storeReferralOfUserStat, storeUserCollateral } from "./schema-helper";
+import { ignoreOrCreateLeaderboardSnapOfPrevHour, loadOrCreateLeaderboard, loadOrCreateMarketToken, saveCollateralPrice, storeReferralOfUserStat, storeUserCollateral } from "./schema-helper";
 import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 
 
@@ -63,7 +62,7 @@ export function handleEventLog1(event: EventLog1Event): void {
     );
     saveCollateralPrice(collateralToken, collateralMidPrice, timestamp);
     {
-      ignoreOrCreateLeaderboardSnapOfPrevDay(account, timestamp);
+      ignoreOrCreateLeaderboardSnapOfPrevHour(account, timestamp);
       const leaderboard = loadOrCreateLeaderboard(account);
       const sizeDeltaUsd_BD = sizeDeltaUsd.toBigDecimal().div(DECIMAL30)
       const netProfit_BD = netProfit.toBigDecimal().div(DECIMAL30);

@@ -5,9 +5,9 @@ import {
 } from "../generated/GlpManager/GlpManager";
 
 import { BD_ZERO, DECIMAL30 } from "./const";
-import { createUserLiquiditySnap, loadOrCreateUserLiquidity } from "./schema";
 import { getMarketTokenPriceV1 } from "./v1-healper";
 import { exponentToBigDecimal } from "./helpers";
+import { createUserLiquiditySnap, loadOrCreateUserLiquidity } from "./schema-helper";
 
 export function handleAddLiquidity(event: AddLiquidityEvent): void {
   _storeUserLiquidity(event.params.account.toHexString(), event.block.timestamp.toI32(), event.params.token.toHexString(), event.params.mintAmount)
@@ -16,9 +16,6 @@ export function handleAddLiquidity(event: AddLiquidityEvent): void {
 export function handleRemoveLiquidity(event: RemoveLiquidityEvent): void {
   _storeUserLiquidity(event.params.account.toHexString(), event.block.timestamp.toI32(), event.params.token.toHexString(), event.params.glpAmount.neg())
 }
-
-
-
 
 function _storeUserLiquidity(account: string, timestamp: i32, targetMarket: string, value: BigInt): void {
   const userLiquidity = loadOrCreateUserLiquidity(account);
@@ -44,7 +41,7 @@ function _storeUserLiquidity(account: string, timestamp: i32, targetMarket: stri
         lps[i] = lps[i].plus(value);
         foundTarget = true;
       }
-      gainedPointBase = gainedPointBase.plus(lp.toBigDecimal().times(midPrice).div(exponentToBigDecimal(18)).times(pointsIndex));
+      gainedPointBase = gainedPointBase.plus(lp.toBigDecimal().times(pointsIndex));
     }
     userLiquidity.basePoints = userLiquidity.basePoints.plus(gainedPointBase);
   }
@@ -57,11 +54,14 @@ function _storeUserLiquidity(account: string, timestamp: i32, targetMarket: stri
     markets.push(targetMarket);
     userLiquidity.markets = markets;
     marketPrices.push(nowPrice.toBigDecimal().div(DECIMAL30));
+    const ver = userLiquidity.ver;
+    ver.push(1);
+    userLiquidity.ver = ver;
   }
   userLiquidity.lps = lps;
   userLiquidity.marketPrices = marketPrices;
   userLiquidity.save();
-  createUserLiquiditySnap(account, userLiquidity.latestUpdateTimestamp, userLiquidity.lps, userLiquidity.markets, userLiquidity.marketPrices, userLiquidity.basePoints);
+  createUserLiquiditySnap(account, userLiquidity.latestUpdateTimestamp, userLiquidity.lps, userLiquidity.markets, userLiquidity.marketPrices, userLiquidity.ver, userLiquidity.basePoints);
   // FIXME: for modemax
   // const userData = loadOrCreateUserStat(account);
   // userData.lp = userLiquidity.lp.div(DECIMAL18);

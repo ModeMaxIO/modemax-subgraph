@@ -1,9 +1,9 @@
 import { BigDecimal, BigInt, log } from '@graphprotocol/graph-ts';
 import { Transfer as TransferEvent } from '../generated/templates/MarketTokenTemplate/MarketToken'
 import { BD_ZERO, DECIMAL18, DECIMAL30, ZeroAddress } from './const';
-import { createUserLiquiditySnap, loadOrCreateUserLiquidity } from './schema';
 import { loadOrCreateUserStat } from './event-emitter-schema-helper';
 import { getMarketTokenPrice } from './event-emitter-helper';
+import { createUserLiquiditySnap, loadOrCreateUserLiquidity } from './schema-helper';
 
 export function handleMarketTokenTransfer(event: TransferEvent): void {
   let from = event.params.from.toHexString();
@@ -60,11 +60,14 @@ function _storeUserLiquidity(account: string, timestamp: i32, targetMarket: stri
     markets.push(targetMarket);
     userLiquidity.markets = markets;
     marketPrices.push(nowPrice.toBigDecimal().div(DECIMAL30));
+    const ver = userLiquidity.ver;
+    ver.push(2);
+    userLiquidity.ver = ver;
   }
   userLiquidity.lps = lps;
   userLiquidity.marketPrices = marketPrices;
   userLiquidity.save();
-  createUserLiquiditySnap(account, userLiquidity.latestUpdateTimestamp, userLiquidity.lps, userLiquidity.markets, userLiquidity.marketPrices ,userLiquidity.basePoints);
+  createUserLiquiditySnap(account, userLiquidity.latestUpdateTimestamp, userLiquidity.lps, userLiquidity.markets, userLiquidity.marketPrices, userLiquidity.ver, userLiquidity.basePoints);
   // FIXME: for modemax
   // const userData = loadOrCreateUserStat(account);
   // userData.lp = userLiquidity.lp.div(DECIMAL18);

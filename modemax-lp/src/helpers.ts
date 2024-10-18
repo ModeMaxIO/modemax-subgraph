@@ -2,11 +2,18 @@ import { BigDecimal, BigInt } from "@graphprotocol/graph-ts";
 import { BI_ONE, BI_ZERO } from "./const";
 
 const DAY = BigInt.fromI32(3600*24);
+const HOUR = BigInt.fromI32(3600);
 
 export function getDayStartTimestamp(timestamp: i32): i32 {
   const biTime = BigInt.fromI32(timestamp);
   return biTime.div(DAY).times(DAY).toI32();
 }
+
+export function getHourStartTimestamp(timestamp: i32): i32 {
+  const biTime = BigInt.fromI32(timestamp);
+  return biTime.div(HOUR).times(HOUR).toI32();
+}
+
 
 export function exponentToBigDecimal(decimals: i32): BigDecimal {
   let bd = BigDecimal.fromString('1')

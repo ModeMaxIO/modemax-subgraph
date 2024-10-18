@@ -39,3 +39,16 @@ export function getMarketTokenPriceV1(market: string, timestamp: i32): BigInt {
   marketPrice.save();
   return marketPrice.price;
 }
+
+export function getMinPriveV1(token: string): BigInt {
+  const entity = loadVault();
+  if (!entity) {
+    return BI_ZERO;
+  }
+  const vault = VaultContract.bind(Address.fromBytes(entity.address));
+  const minResult = vault.try_getMinPrice(Address.fromString(token));
+  if (minResult.reverted) {
+    return BI_ZERO;
+  }
+  return minResult.value;
+}

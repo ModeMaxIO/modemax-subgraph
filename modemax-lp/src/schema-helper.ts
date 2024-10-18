@@ -1,9 +1,9 @@
-import { BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
+import { Address, BigDecimal, BigInt, Bytes } from "@graphprotocol/graph-ts";
 import { loadOrCreateUserStat } from "./event-emitter-schema-helper";
 import { getReferralCode, getReferralCodeOwner } from "./referral-storage-schema-helper";
 import { BD_ZERO, BI_ZERO, C_DATA_STORE, C_STAKED_TOKEN, C_SYNTHETICS_READER, C_VAULT, DECIMAL18, DECIMAL30, ZeroAddress } from "./const";
-import { CollateralPrice, ContractBundle, Leaderboard, LeaderboardSnap, MarketPrice, UserCollateral, UserLiquidity } from "../generated/schema";
-import { getDayStartTimestamp } from "./helpers";
+import { CollateralPrice, ContractBundle, Leaderboard, LeaderboardSnap, MarketPrice, MarketToken, UserCollateral, UserLiquidity, UserLiquiditySnap } from "../generated/schema";
+import { getHourStartTimestamp } from "./helpers";
 
 export function storeReferralOfUserStat(account: string, sizeDelta: BigInt): void {
   let referralCode = getReferralCode(account);
@@ -76,6 +76,58 @@ export function loadVault(): ContractBundle | null {
   return ContractBundle.load(C_VAULT);
 }
 
+export function loadOrCreateMarketToken(address: Address, indexToken: string, longToken: string, shortToken: string): MarketToken {
+  const id = address.toHexString();
+  let marketToken = MarketToken.load(id);
+  if (!marketToken) {
+    marketToken = new MarketToken(id);
+    marketToken.indexToken = indexToken;
+    marketToken.longToken = longToken;
+    marketToken.shortToken = shortToken;
+    marketToken.save();
+  }
+  return marketToken;
+}
+
+export function loadOrCreateUserLiquidity(account: string): UserLiquidity {
+  const id = account;
+  let userLiquidity = UserLiquidity.load(id);
+  if (!userLiquidity) {
+    userLiquidity = new UserLiquidity(id);
+    userLiquidity.lps = [];
+    userLiquidity.markets = [];
+    userLiquidity.marketPrices = [];
+    userLiquidity.ver = [];
+    userLiquidity.basePoints = BD_ZERO;
+    userLiquidity.latestUpdateTimestamp = 0;
+    userLiquidity.save();
+  }
+  return userLiquidity;
+}
+
+export function createUserLiquiditySnap(account: string, timestamp: i32, lps: BigInt[], markets: string[], marketPrices: BigDecimal[], ver: i32[], basePoints: BigDecimal): void {
+  let id = account.
+    concat(timestamp.toString());
+  let snap = UserLiquiditySnap.load(id);
+  let index = 0;
+  for (; snap;) {
+    snap = UserLiquiditySnap.load(id.concat('-').concat(index.toString()));
+    index++;
+  }
+  if (index > 0) {
+    id = id.concat('-').concat(index.toString());
+  }
+  snap = new UserLiquiditySnap(id);
+  snap.account = account;
+  snap.timestamp = timestamp;
+  snap.lps = lps;
+  snap.markets = markets;
+  snap.marketPrices = marketPrices;
+  snap.ver = ver;
+  snap.basePoints = basePoints;
+  snap.save();
+}
+
 export function loadOrCreateUserCollateral(account: string): UserCollateral {
   let id = account;
   let collateral = UserCollateral.load(id);
@@ -117,27 +169,31 @@ export function loadOrCreateLeaderboard(account: string): Leaderboard {
   let leaderboard = Leaderboard.load(account);
   if (!leaderboard) {
     leaderboard = new Leaderboard(account);
-    leaderboard.account = account;
     leaderboard.margin = BD_ZERO;
     leaderboard.netProfit = BD_ZERO;
     leaderboard.tradingVolume = BD_ZERO;
-    leaderboard.collateral = account;
     leaderboard.latestUpdateTimestamp = 0;
     leaderboard.swap = BD_ZERO;
+    leaderboard.referral = BD_ZERO;
+    loadOrCreateUserLiquidity(account);
+    leaderboard.liquidity = account;
+    loadOrCreateUserCollateral(account);
+    leaderboard.collateral = account;
+
     leaderboard.save();
   }
   return leaderboard;
 }
 
 
-export function ignoreOrCreateLeaderboardSnapOfPrevDay(account: string, newTimestamp: i32): void {
+export function ignoreOrCreateLeaderboardSnapOfPrevHour(account: string, newTimestamp: i32): void {
   const leaderboard = loadOrCreateLeaderboard(account);
   if (leaderboard.latestUpdateTimestamp == 0) {
     return;
   }
 
-  const newTime = getDayStartTimestamp(newTimestamp);
-  const currTime = getDayStartTimestamp(leaderboard.latestUpdateTimestamp);
+  const newTime = getHourStartTimestamp(newTimestamp);
+  const currTime = getHourStartTimestamp(leaderboard.latestUpdateTimestamp);
   if (currTime == newTime) {
     return;
   }
@@ -147,11 +203,12 @@ export function ignoreOrCreateLeaderboardSnapOfPrevDay(account: string, newTimes
     return;
   }
   snap = new LeaderboardSnap(currSnapId)
-  snap.account = leaderboard.account;
+  snap.account = leaderboard.id;
   snap.margin = leaderboard.margin;
   snap.netProfit = leaderboard.netProfit;
   snap.tradingVolume = leaderboard.tradingVolume;
   snap.swap = leaderboard.swap;
+  snap.referral = leaderboard.referral;
   snap.timestamp = currTime;
   {
     const userLiquidity = UserLiquidity.load(account);
@@ -201,10 +258,20 @@ export function loadOrCreateMarketTokenPrice(market: string): MarketPrice {
   let id = market;
   let marketPrice = MarketPrice.load(id);
   if (!marketPrice) {
-      marketPrice = new MarketPrice(id);
-      marketPrice.price = BI_ZERO;
-      marketPrice.timestamp = 0;
-      marketPrice.save();
+    marketPrice = new MarketPrice(id);
+    marketPrice.price = BI_ZERO;
+    marketPrice.timestamp = 0;
+    marketPrice.save();
   }
   return marketPrice;
+}
+
+export function saveCollateralPrice(token: string, price: BigDecimal, timestamp: i32): void {
+  let collateralPrice = CollateralPrice.load(token);
+  if (!collateralPrice) {
+    collateralPrice = new CollateralPrice(token);
+  }
+  collateralPrice.price = price;
+  collateralPrice.timestamp = timestamp;
+  collateralPrice.save();
 }

@@ -13,6 +13,7 @@ type Token @entity {
   name: String!
   symbol: String!
   decimals: Int!
+  vaultDecimals: Int!
 }
 
 type TokenPrice @entity {
@@ -35,6 +36,8 @@ type UserLiquidity @entity {
   lps: [BigInt!]!
   markets: [String!]!
   marketPrices: [BigDecimal!]!
+  # 1:v1 2:v2
+  ver: [Int!]!
   basePoints: BigDecimal!
   latestUpdateTimestamp: Int!
   snap: [UserLiquiditySnap!] @derivedFrom(field: "account")
@@ -48,6 +51,7 @@ type UserLiquiditySnap @entity(immutable: true) {
   lps: [BigInt!]!
   markets: [String!]!
   marketPrices: [BigDecimal!]!
+  ver: [Int!]!
   basePoints: BigDecimal!
 }
 
@@ -148,13 +152,13 @@ type CollateralPrice @entity {
 type Leaderboard @entity {
   # account
   id: ID!
-  account: String!
   margin: BigDecimal!
   netProfit: BigDecimal!
   tradingVolume: BigDecimal!
   latestUpdateTimestamp: Int!
   swap: BigDecimal!
-  liquidity: UserLiquidity
+  referral: BigDecimal!
+  liquidity: UserLiquidity!
   collateral: UserCollateral!
   snap: [LeaderboardSnap!]! @derivedFrom(field: "account")
 }
@@ -168,6 +172,7 @@ type LeaderboardSnap @entity(immutable: true) {
   netProfit: BigDecimal!
   tradingVolume: BigDecimal!
   swap: BigDecimal!
+  referral: BigDecimal!
   lpUsd: BigDecimal!
   collateralUsd: BigDecimal!
 }
