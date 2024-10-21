@@ -51,9 +51,9 @@ dataSources:
     name: PositionRouter
     network: mode-testnet
     source:
-      address: '0x580260DC516790518F752ddF5CF026E0f2D093F2'
+      address: '0x376c6ec3bA577827000deBbd979B321331469b41'
       abi: PositionRouter
-      startBlock: 20602912
+      startBlock: 20780636
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -74,9 +74,9 @@ dataSources:
     name: ReferralDistributor
     network: mode-testnet
     source:
-      address: "0x93D802A9959403A64407840d4396D7d7866059e9"
+      address: "0x2A10ed3b098494a97202D83638317709bfF5f509"
       abi: ReferralDistributor
-      startBlock: 20602769
+      startBlock: 20780945
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
