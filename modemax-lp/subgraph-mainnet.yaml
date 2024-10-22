@@ -2,97 +2,97 @@ specVersion: 0.0.8
 schema:
   file: ./schema.graphql
 dataSources:
-# v2
-  - kind: ethereum
-    name: EventEmitter
-    network: mode-mainnet
-    source:
-      address: "0xd63352120c45378682d705f42a9F085E79E3c888"
-      abi: EventEmitter
-      startBlock: 10689910
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - MarketToken
-      abis:
-        - name: EventEmitter
-          file: ./abis/EventEmitter.json
-        - name: Reader
-          file: ./abis/Reader.json
-      eventHandlers:
-        - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
-          handler: handleEventLog1
-      file: ./src/event-emitter.ts
-  - kind: ethereum
-    name: ReferralStorage
-    network: mode-mainnet
-    source:
-      address: "0x301067B97FED258EeE42b502d8fF94a30f7d0365"
-      abi: ReferralStorage
-      startBlock: 10655820
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - RegisterCode
-      abis:
-        - name: ReferralStorage
-          file: ./abis/ReferralStorage.json
-      eventHandlers:
-        - event: RegisterCode(address,bytes32)
-          handler: handleRegisterCode
-        - event: SetCodeOwner(address,address,bytes32)
-          handler: handleSetCodeOwner
-        - event: GovSetCodeOwner(bytes32,address)
-          handler: handleGovSetCodeOwner
-        - event: SetTraderReferralCode(address,bytes32)
-          handler: handleSetTraderReferralCode
-      file: ./src/referral-storage.ts
-  - kind: ethereum
-    name: SyntheticsReader
-    network: mode-mainnet
-    source:
-      address: "0x1773953F5d9aD46aaEBD4870A3491c3fFc6d38f4"
-      abi: Reader
-      startBlock: 10690185
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - ContractBundle
-      abis:
-        - name: Reader
-          file: ./abis/Reader.json
-      blockHandlers:
-        - handler: handleOnce
-          filter:
-            kind: once
-      file: ./src/synthetics-reader.ts
-  - kind: ethereum
-    name: DataStore
-    network: mode-mainnet
-    source:
-      address: "0x3737Af56b945A0F25F0330E03B9327a977DBB400"
-      abi: Reader
-      startBlock: 10690185
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - ContractBundle
-      abis:
-        - name: Reader
-          file: ./abis/Reader.json
-      blockHandlers:
-        - handler: handleOnce
-          filter:
-            kind: once
-      file: ./src/data-store.ts
+# # v2
+#   - kind: ethereum
+#     name: EventEmitter
+#     network: mode-mainnet
+#     source:
+#       address: "0xd63352120c45378682d705f42a9F085E79E3c888"
+#       abi: EventEmitter
+#       startBlock: 10689910
+#     mapping:
+#       kind: ethereum/events
+#       apiVersion: 0.0.7
+#       language: wasm/assemblyscript
+#       entities:
+#         - MarketToken
+#       abis:
+#         - name: EventEmitter
+#           file: ./abis/EventEmitter.json
+#         - name: Reader
+#           file: ./abis/Reader.json
+#       eventHandlers:
+#         - event: EventLog1(address,string,indexed string,indexed bytes32,(((string,address)[],(string,address[])[]),((string,uint256)[],(string,uint256[])[]),((string,int256)[],(string,int256[])[]),((string,bool)[],(string,bool[])[]),((string,bytes32)[],(string,bytes32[])[]),((string,bytes)[],(string,bytes[])[]),((string,string)[],(string,string[])[])))
+#           handler: handleEventLog1
+#       file: ./src/event-emitter.ts
+  # - kind: ethereum
+  #   name: ReferralStorage
+  #   network: mode-mainnet
+  #   source:
+  #     address: "0x301067B97FED258EeE42b502d8fF94a30f7d0365"
+  #     abi: ReferralStorage
+  #     startBlock: 10655820
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.7
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - RegisterCode
+  #     abis:
+  #       - name: ReferralStorage
+  #         file: ./abis/ReferralStorage.json
+  #     eventHandlers:
+  #       - event: RegisterCode(address,bytes32)
+  #         handler: handleRegisterCode
+  #       - event: SetCodeOwner(address,address,bytes32)
+  #         handler: handleSetCodeOwner
+  #       - event: GovSetCodeOwner(bytes32,address)
+  #         handler: handleGovSetCodeOwner
+  #       - event: SetTraderReferralCode(address,bytes32)
+  #         handler: handleSetTraderReferralCode
+  #     file: ./src/referral-storage.ts
+  # - kind: ethereum
+  #   name: SyntheticsReader
+  #   network: mode-mainnet
+  #   source:
+  #     address: "0x1773953F5d9aD46aaEBD4870A3491c3fFc6d38f4"
+  #     abi: Reader
+  #     startBlock: 10690185
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.7
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ContractBundle
+  #     abis:
+  #       - name: Reader
+  #         file: ./abis/Reader.json
+  #     blockHandlers:
+  #       - handler: handleOnce
+  #         filter:
+  #           kind: once
+  #     file: ./src/synthetics-reader.ts
+  # - kind: ethereum
+  #   name: DataStore
+  #   network: mode-mainnet
+  #   source:
+  #     address: "0x3737Af56b945A0F25F0330E03B9327a977DBB400"
+  #     abi: Reader
+  #     startBlock: 10690185
+  #   mapping:
+  #     kind: ethereum/events
+  #     apiVersion: 0.0.7
+  #     language: wasm/assemblyscript
+  #     entities:
+  #       - ContractBundle
+  #     abis:
+  #       - name: Reader
+  #         file: ./abis/Reader.json
+  #     blockHandlers:
+  #       - handler: handleOnce
+  #         filter:
+  #           kind: once
+  #     file: ./src/data-store.ts
 # v1
   - kind: ethereum
     name: Vault
@@ -134,9 +134,9 @@ dataSources:
     name: GlpManager
     network: mode-mainnet
     source:
-      address: '0xbD32D2b19049Fc4ce12E537620907a6Aa0458C80'
+      address: '0xd6922Cb37D705e50487b5540E4ee6f3de5427799'
       abi: GlpManager
-      startBlock: 10651632
+      startBlock: 10811634
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7

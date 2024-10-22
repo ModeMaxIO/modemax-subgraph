@@ -2,14 +2,16 @@
   "name": "stats",
   "license": "UNLICENSED",
   "scripts": {
-    "codegen": "graph codegen",
-    "build": "graph build",
+    "codegen": "graph codegen subgraph-mainnet.yaml",
+    "build": "graph build subgraph-mainnet.yaml",
     "create-local": "graph create --node http://localhost:8020/ loxoperp/stats",
     "remove-local": "graph remove --node http://localhost:8020/ loxoperp/stats",
     "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 loxoperp/stats",
     "test": "graph test",
-    "remove-mainnet": "goldsky subgraph delete modemax-stats-test/v0.0.1",
-    "deploy-mainnet": "goldsky subgraph deploy modemax-stats-test/v0.0.1"
+    "remove-testnet": "goldsky subgraph delete modemax-stats-test/v0.0.1",
+    "deploy-testnet": "goldsky subgraph deploy modemax-stats-test/v0.0.1",
+    "remove-mainnet": "goldsky subgraph delete modemax-stats-v2/v0.0.1",
+    "deploy-mainnet": "goldsky subgraph deploy modemax-stats-v2/v0.0.1"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.81.0",
