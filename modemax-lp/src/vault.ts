@@ -87,12 +87,11 @@ export function handleLiquidatePosition(event: LiquidatePositionEvent): void {
   }
 }
 
-// FIXME: when swap is required
 export function handleSwap(event: SwapEvent): void {
-  // const marketPrice = getMarketTokenPriceV1(event.params.tokenIn.toHexString(), event.block.timestamp.toI32())
-  // const token = _loadOrStoreToken(event.params.tokenIn);
-  // const swapUSD = event.params.amountIn.toBigDecimal().times(marketPrice.toBigDecimal()).div(DECIMAL30).div(exponentToBigDecimal(token.decimals as i32));
-  // _storeLeaderboardSwap(event.params.account.toHexString(), event.block.timestamp.toI32(), swapUSD);
+  const marketPrice = getMarketTokenPriceV1(event.params.tokenIn.toHexString(), event.block.timestamp.toI32())
+  const token = _loadOrStoreToken(event.params.tokenIn, event.address);
+  const swapUSD = event.params.amountIn.toBigDecimal().times(marketPrice.toBigDecimal()).div(DECIMAL30).div(exponentToBigDecimal(token.decimals as i32));
+  _storeLeaderboardSwap(event.params.account.toHexString(), event.block.timestamp.toI32(), swapUSD);
 }
 
 function _loadOrStoreToken(tokenAddr: Address, vault: Address): Token {
